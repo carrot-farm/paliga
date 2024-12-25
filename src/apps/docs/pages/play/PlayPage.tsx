@@ -9,8 +9,7 @@ function PlayPage({}: Timelinerops) {
   return (
     <Accordion
       selectionMode="multiple"
-      // defaultExpandedKeys={Array.from({ length: 7 }, (_, i) => String(i))}
-      defaultExpandedKeys={["2"]}
+      defaultExpandedKeys={Array.from({ length: 3 }, (_, i) => String(i))}
     >
       <AccordionItem title="애니메이션 실행" key="0">
         <PlayTest1 />

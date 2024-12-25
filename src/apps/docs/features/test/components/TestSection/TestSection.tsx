@@ -3,11 +3,13 @@ import { Button, cn, Link } from "@nextui-org/react";
 import { forwardRef, ReactNode, Ref } from "react";
 
 /** ===== Components ===== */
+/** 기본 테스트 */
 function TestSection({
   title,
   titleLink,
   description,
   className,
+  classNames,
   children,
   onPlay,
   onPause,
@@ -46,7 +48,12 @@ function TestSection({
         </div>
       </div>
 
-      <div className="relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-500">
+      <div
+        className={cn(
+          "relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-500",
+          classNames?.container,
+        )}
+      >
         {children}
       </div>
     </section>
@@ -61,7 +68,7 @@ const Box = forwardRef(
   ) => {
     return (
       <div
-        className={cn(`relative h-5 w-5 rounded-md bg-warning-500 text-[0.7rem]`, className)}
+        className={cn(`relative h-5 w-5 rounded-[6px] bg-warning-500 text-[0.7rem]`, className)}
         ref={ref}
       >
         <div className="translate-x-[calc(100%+8px)] whitespace-nowrap dark:text-gray-400">
@@ -85,6 +92,11 @@ export type TestSectionProps = {
   description?: string;
   /** 클래스 */
   className?: string;
+  /** 하위 요소의 클래스 */
+  classNames?: {
+    /** 자식 요소 래퍼의 클래스 */
+    container?: string;
+  };
   /** children */
   children?: ReactNode;
   /** 플레이 시 콜백 */

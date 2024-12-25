@@ -1,7 +1,9 @@
 "use client";
 import { cn } from "@nextui-org/react";
 import { Outlet } from "react-router-dom";
+import { MENU_ITEMS } from "../../shared/constants/menu";
 import { Header } from "../Header";
+import { Menu } from "../Menu";
 
 /** ===== Components ===== */
 function MainLayout({}: MainLayoutProps) {
@@ -20,7 +22,7 @@ function MainLayout({}: MainLayoutProps) {
         <div className="grid grid-cols-12">
           {/* menu */}
           <div className="relative mt-8 hidden overflow-visible pr-4 lg:col-span-2 lg:block">
-            nav
+            <Menu data={MENU_ITEMS} />
           </div>
 
           <div className="col-span-12 mt-10 lg:col-span-10 lg:px-16 xl:col-span-8">

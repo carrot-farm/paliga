@@ -6,6 +6,7 @@ export const MENU_ITEMS: TMenu = [
     items: [
       { label: "Timeline", path: "/timeline" },
       { label: "Play", path: "/play" },
+      { label: "IntersectionPlay", path: "/intersection-play" },
     ],
   },
 ] as const;
