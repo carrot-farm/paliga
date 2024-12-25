@@ -46,7 +46,7 @@ function TestSection({
         </div>
       </div>
 
-      <div className="relative mt-2 min-h-[140px] rounded border p-2 dark:border-gray-500">
+      <div className="relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-500">
         {children}
       </div>
     </section>
@@ -60,7 +60,10 @@ const Box = forwardRef(
     ref: Ref<HTMLDivElement>,
   ) => {
     return (
-      <div className={cn(`relative h-5 w-5 bg-warning-500 text-[0.7rem]`, className)} ref={ref}>
+      <div
+        className={cn(`relative h-5 w-5 rounded-md bg-warning-500 text-[0.7rem]`, className)}
+        ref={ref}
+      >
         <div className="translate-x-[calc(100%+8px)] whitespace-nowrap dark:text-gray-400">
           {children}
         </div>

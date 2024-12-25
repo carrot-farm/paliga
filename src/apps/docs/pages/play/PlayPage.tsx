@@ -2,6 +2,7 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { PlayTest1 } from "../../features/play/components/PlayTest1";
 import { PlayTest2 } from "../../features/play/components/PlayTest2";
+import { PlayTest3 } from "../../features/play/components/PlayTest3";
 
 /** ===== Components ===== */
 function PlayPage({}: Timelinerops) {
@@ -9,14 +10,18 @@ function PlayPage({}: Timelinerops) {
     <Accordion
       selectionMode="multiple"
       // defaultExpandedKeys={Array.from({ length: 7 }, (_, i) => String(i))}
-      defaultExpandedKeys={["1"]}
+      defaultExpandedKeys={["2"]}
     >
-      <AccordionItem title="애니메이션 시작" key="0">
+      <AccordionItem title="애니메이션 실행" key="0">
         <PlayTest1 />
       </AccordionItem>
 
       <AccordionItem title="애니메이션 중단" key="1">
         <PlayTest2 />
+      </AccordionItem>
+
+      <AccordionItem title="옵션" key="2">
+        <PlayTest3 />
       </AccordionItem>
     </Accordion>
   );

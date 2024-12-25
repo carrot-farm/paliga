@@ -2,8 +2,8 @@ import { CSSProperties } from "react";
 
 /** ==== 메소드 옵션 ==== */
 export type TPlayOptions = {
-  /** true일 경우 무한 반복 */
-  infinity?: boolean;
+  /** 반복 횟수 */
+  iteration?: number;
   /** 모든 애니메이션 종료 시 콜백 */
   onAllAnimationEnd?: (data: { segments?: TSegment[] }) => void;
 };
@@ -34,6 +34,7 @@ type TIntersectingParams = {
 export type TEachState = Pick<TTransition, "direction" | "easing" | "x" | "y" | "delay">;
 
 /** ===== 상태 ===== */
+
 /** 하나의 엘리먼트에 적용될 애니메이션 정보 */
 export type TTransition = {
   /** animate의 인덱스 */

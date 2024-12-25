@@ -29,7 +29,9 @@ export class Paliga {
   }
 
   /** 연속 실행기 */
-  play({ infinity, onAllAnimationEnd }: TPlayOptions = {}) {
+  play({ iteration, onAllAnimationEnd }: TPlayOptions = {}) {
+    let newIteration = iteration;
+
     if (this.#state === "running") {
       return;
     }
@@ -38,7 +40,11 @@ export class Paliga {
     /** 모든 애니메이션 종료 시 콜백 */
     const handleAllAnimationEnd: TPlayOptions["onAllAnimationEnd"] = ({ segments }) => {
       // # 반복
-      if (infinity && this.#state !== "paused") {
+      if (newIteration !== undefined && newIteration > 1 && this.#state !== "paused") {
+        if (newIteration !== Infinity) {
+          newIteration--;
+        }
+
         this.#runner({
           schedules: this.#schedule,
           onAllAnimationEnd: handleAllAnimationEnd,
@@ -48,7 +54,11 @@ export class Paliga {
 
       this.#state = "idle";
 
-      if (typeof onAllAnimationEnd === "function") {
+      // # 모든 애니메이션 종료 시 호출
+      if (
+        typeof onAllAnimationEnd === "function" &&
+        (newIteration === undefined || newIteration <= 1)
+      ) {
         onAllAnimationEnd({ segments: segments ? [...segments] : segments });
       }
     };
