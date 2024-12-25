@@ -61,9 +61,13 @@ export type TTransition = {
 
 /** onFrame 파라메터 */
 export type TOnFrameParams = {
+  /** 전체 진행도 */
   progress: number;
+  /** 현재 구간의 진행도 */
   animationProgress: number;
+  /** 전체 진행시간(ms) */
   maxDuration: number;
+  /** 현재 실행중인 애니메이션 정보 */
   animation: TAnimation;
 };
 

@@ -16,6 +16,7 @@ import { framer } from "./framer";
 import { throttle } from "./timeUtils";
 
 export class Paliga {
+  #state: "idle" | "running" | "paused" = "idle";
   #totalDuration: number = 0;
   #animates: ({ elements: HTMLElement[] } & TAnimateOptions)[] = [];
   #segments: TSegment[] = [];
@@ -24,17 +25,28 @@ export class Paliga {
   #intersectionObservers: IntersectionObserver[] = [];
 
   constructor() {
-    this.#initialize();
+    this.initialize();
   }
 
   /** 연속 실행기 */
   play({ infinity, onAllAnimationEnd }: TPlayOptions = {}) {
+    if (this.#state === "running") {
+      return;
+    }
+    this.#state = "running";
+
     /** 모든 애니메이션 종료 시 콜백 */
     const handleAllAnimationEnd: TPlayOptions["onAllAnimationEnd"] = ({ segments }) => {
       // # 반복
-      if (infinity) {
-        this.#runner({ schedules: this.#schedule, onAllAnimationEnd: handleAllAnimationEnd });
+      if (infinity && this.#state !== "paused") {
+        this.#runner({
+          schedules: this.#schedule,
+          onAllAnimationEnd: handleAllAnimationEnd,
+        });
+        return;
       }
+
+      this.#state = "idle";
 
       if (typeof onAllAnimationEnd === "function") {
         onAllAnimationEnd({ segments: segments ? [...segments] : segments });
@@ -42,7 +54,10 @@ export class Paliga {
     };
 
     // 실행
-    this.#runner({ schedules: this.#schedule, onAllAnimationEnd: handleAllAnimationEnd });
+    this.#runner({
+      schedules: this.#schedule,
+      onAllAnimationEnd: handleAllAnimationEnd,
+    });
   }
 
   /** 교차 시 실행 */
@@ -170,6 +185,8 @@ export class Paliga {
 
   /** 애니메이션 중단 */
   pause() {
+    this.#state = "paused";
+
     this.#eachSchedule((schedule) => {
       schedule.state = "paused";
     });
@@ -307,7 +324,7 @@ export class Paliga {
   }
 
   /** 초기화 */
-  #initialize() {
+  initialize() {
     // # intersection observer 이벤트 해제
     this.#schedule.forEach((schedule) => {
       this.#intersectionObservers.forEach((observer) => {
@@ -326,6 +343,8 @@ export class Paliga {
     this.#schedule = [];
     this.#scrollLisners = [];
     this.#intersectionObservers = [];
+
+    return this;
   }
 
   /** 스케쥴을 생성 */
