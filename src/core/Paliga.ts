@@ -6,6 +6,7 @@ import {
   TIntersectionPlayOptions,
   TPlayOptions,
   TSchedule,
+  TScrollProgressOptions,
   TSegment,
   TStylesState,
   TTransition,
@@ -120,20 +121,23 @@ export class Paliga {
   /** progress 에 따른 스타일 적용 */
   progress(progress: number) {
     this.#eachSchedule((schedule) => {
-      this.#scheduleProgress({ startProgress: progress, schedule });
+      this.#scheduleProgress({
+        startProgress: progress,
+        schedule,
+      });
     });
   }
 
   /** 스크롤의 진행에 따라 애니메이션 */
-  scrollProgress({
-    start = 0,
-    end = 0,
-    duration = 500,
-  }: { start?: number; end?: number; duration?: number } = {}) {
+  scrollProgress({ startY = 0, endY = 0, duration = 500, root }: TScrollProgressOptions = {}) {
+    const getScrollY = (el: HTMLElement | Window) =>
+      "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
+    const newRoot = root ?? window;
     const len = this.#schedule.length;
+    const scrollY = getScrollY(newRoot);
     let state = "idle";
     let i = 0;
-    let prevProgress = (window.scrollY - start) / (end - start);
+    let prevProgress = (scrollY - startY) / (endY - startY);
     let animated: string[] = [];
 
     this.#scrollLisners.forEach((listener) => {
@@ -143,7 +147,8 @@ export class Paliga {
 
     /** 스크롤 이벤트 */
     const handleScroll = () => {
-      const progress = Math.max(Math.min((window.scrollY - start) / (end - start), 1), 0);
+      const scrollY = getScrollY(newRoot);
+      const progress = Math.max(Math.min((scrollY - startY) / (endY - startY), 1), 0);
       if (state === "running") {
         return;
       }
@@ -152,8 +157,8 @@ export class Paliga {
 
       throttle(() => {
         while (i < len) {
+          const scrollY = getScrollY(newRoot);
           const schedule = this.#schedule[i];
-          const scrollY = window.scrollY;
 
           this.#scheduleProgress({
             startProgress: prevProgress,
@@ -190,7 +195,7 @@ export class Paliga {
 
     handleScroll();
     this.#scrollLisners.push(handleScroll);
-    window.addEventListener("scroll", handleScroll);
+    newRoot.addEventListener("scroll", handleScroll);
   }
 
   /** 애니메이션 중단 */
@@ -215,7 +220,6 @@ export class Paliga {
     }
     const segmentLen = this.#animates?.length ?? 0;
     const prevSegment = this.#animates[segmentLen - 1];
-    // console.log("> ", prevSegment);
 
     // # 엘리먼트 셋팅
     if (Array.isArray(elements)) {
@@ -518,12 +522,13 @@ export class Paliga {
       startProgress: newStartProgress,
       endProgress: newEndProgress,
       onFrame: ({ progress }) => {
-        const newProgress = isNormal
-          ? progress
-          : Math.max(
-              diff * (1 - (progress - newStartProgress) / diff) + newStartProgress,
-              newStartProgress,
-            );
+        const newProgress =
+          isNormal || diff === 0
+            ? progress
+            : Math.max(
+                diff * (1 - (progress - newStartProgress) / diff) + newStartProgress,
+                newStartProgress,
+              );
 
         const styles = this.#progressAnimationStyle({
           maxDuration,

@@ -1,6 +1,6 @@
 "use client";
 import { Button, cn, Link } from "@nextui-org/react";
-import { forwardRef, ReactNode, Ref } from "react";
+import { forwardRef, ReactNode, Ref, RefObject } from "react";
 
 /** ===== Components ===== */
 /** 기본 테스트 */
@@ -11,6 +11,7 @@ function TestSection({
   className,
   classNames,
   children,
+  containerRef,
   onPlay,
   onPause,
 }: TestSectionProps) {
@@ -53,6 +54,7 @@ function TestSection({
           "relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-500",
           classNames?.container,
         )}
+        ref={containerRef}
       >
         {children}
       </div>
@@ -99,6 +101,8 @@ export type TestSectionProps = {
   };
   /** children */
   children?: ReactNode;
+  /** container의 ref */
+  containerRef?: RefObject<HTMLDivElement>;
   /** 플레이 시 콜백 */
   onPlay?: () => void;
   /** 플레이 시 콜백 */

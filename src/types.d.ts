@@ -30,6 +30,18 @@ type TIntersectingParams = {
   observer: IntersectionObserver;
 };
 
+/** scrollProgress 파라메터 */
+export type TScrollProgressOptions = {
+  /** 시작 스크롤의 위치 */
+  startY?: number;
+  /** 종료 스크롤의 위치 */
+  endY?: number;
+  /** 애니메이션 기간 */
+  duration?: number;
+  /** 스크롤의 기준이 되는 루트 엘리먼트(default: window) */
+  root?: HTMLElement;
+};
+
 /** each 속성 호출 시 전달받는 인자 */
 export type TEachState = Pick<TTransition, "direction" | "easing" | "x" | "y" | "delay">;
 
