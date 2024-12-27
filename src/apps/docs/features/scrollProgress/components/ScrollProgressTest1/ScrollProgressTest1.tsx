@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@nextui-org/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePaliga } from "../../../../shared/hooks/usePaliga";
 import { TestSection } from "../../../test/components/TestSection";
 
@@ -12,55 +12,60 @@ function ScrollProgressTest1({ className }: ScrollProgressTest1Props) {
   const containerRef1 = useRef<HTMLDivElement>(null);
   const { paliga } = usePaliga();
   const { paliga: paliga2 } = usePaliga();
+  const [box1Y, setBox1Y] = useState<number>();
 
   useEffect(() => {
-    if (box1.current && containerRef1.current) {
+    if (box1.current && containerRef1.current && box2.current) {
       paliga
-        .animate([box1.current], {
-          x: 200,
+        .animate([box1.current, box2.current], {
+          x: 100,
+          y: 80,
           duration: 1000,
         })
         .animate({
-          y: -200,
-          x: -200,
-          duration: 100,
+          y: 100,
+          x: 100,
+          duration: 1000,
         })
         .scrollProgress({
+          trigger: "20%",
           startY: 0,
-          endY: 120,
-          duration: 1000,
-          // root: containerRef1.current,
+          endY: 100,
+          duration: 400,
+          root: containerRef1.current,
         });
     }
-
-    if (box2.current && box3.current) {
-      paliga2
-        .animate([box2.current, box3.current], {
-          x: 200,
-          duration: 1000,
-        })
-        .intersectionPlay();
-    }
   }, []);
+
+  useEffect(() => {
+    if (!box1.current) {
+      return;
+    }
+    const { y } = box1.current.getBoundingClientRect();
+    setBox1Y(y);
+  }, []);
+  // console.log(">> ", box1Y);
 
   return (
     <div className={cn("flex flex-col gap-y-4", className)}>
       <TestSection
         titleLink="scroll-progress1-0"
         description="스크롤에 따라 애니메이션의 진행"
+        scrollTrigger={"20%"}
+        scrollStart={0}
+        scrollEnd={100}
+        scrollTargetEl={box1.current}
         classNames={{
-          container: "h-[140px] overflow-y-auto overflow-x-hidden",
+          container: "h-[240px] overflow-y-auto overflow-x-hidden",
         }}
         containerRef={containerRef1}
       >
-        <div className="h-[200px]"></div>
-        {/* <TestSection.Box ref={box1} /> */}
-        <div className="h-[50px]"></div>
+        <div className="h-[120px]"></div>
+        <TestSection.Box ref={box1} />
+        <TestSection.Box className="mt-8" ref={box2} />
+        <div className="h-[400px]"></div>
       </TestSection>
 
-      <div className="h-[600px]"></div>
-      <TestSection.Box ref={box1} />
-      <div className="h-[800px]"></div>
       {/* 
       <TestSection
         titleLink="intersection-play1-1"

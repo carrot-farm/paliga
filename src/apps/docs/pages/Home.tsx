@@ -1,10 +1,28 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 // import { TestSection } from "../shared/TestSection";
 
 /** ===== Components ===== */
 function Home({}: HomeProps) {
   const box1 = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const st = performance.now();
+    const ani = () => {
+      const step = (t: number) => {
+        const t2 = performance.now() - st;
+        console.log("> ", t, t2);
+        if (t >= 2000) {
+          return;
+        }
+
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    ani();
+  }, []);
 
   return (
     <div className="">

@@ -1,4 +1,7 @@
 import { CSSProperties } from "react";
+import { animationsRunner, getAnimationToStyle } from "../helpers/animationHelpers";
+import { scheduleRunner } from "../helpers/scheduleHelpers";
+import { getInnerHeight } from "../helpers/styleHelpers";
 import {
   TAnimateOptions,
   TAnimation,
@@ -8,11 +11,9 @@ import {
   TSchedule,
   TScrollProgressOptions,
   TSegment,
-  TStylesState,
   TTransition,
 } from "../types";
 import { ApplyStyles } from "./ApplyStyles";
-import { Easing } from "./Easing";
 import { framer } from "./framer";
 import { throttle } from "./timeUtils";
 
@@ -129,68 +130,113 @@ export class Paliga {
   }
 
   /** 스크롤의 진행에 따라 애니메이션 */
-  scrollProgress({ startY = 0, endY = 0, duration = 500, root }: TScrollProgressOptions = {}) {
+  scrollProgress({
+    trigger = 0,
+    startY = 0,
+    endY = 0,
+    duration = 300,
+    root,
+  }: TScrollProgressOptions = {}) {
     const getScrollY = (el: HTMLElement | Window) =>
       "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
+    const limitRange = (num: number) => Math.max(Math.min(num, 1), 0);
     const newRoot = root ?? window;
-    const len = this.#schedule.length;
     const scrollY = getScrollY(newRoot);
+    const scheduleLen = this.#schedule.length;
+    const { y: rootY } =
+      "getBoundingClientRect" in newRoot ? newRoot.getBoundingClientRect() : { y: 0 };
+    const rootBorderWidth =
+      newRoot instanceof Element
+        ? parseInt(newRoot.computedStyleMap().get("border-width")?.toString() ?? "0", 10)
+        : 0;
+    const rootPaddingTop =
+      newRoot instanceof Element
+        ? parseInt(newRoot.computedStyleMap().get("padding-top")?.toString() ?? "0", 10)
+        : 0;
+    const { y: firstY } = this.#schedule[0].animations[0].element.getBoundingClientRect();
+    const baseY = firstY - rootY - rootBorderWidth - rootPaddingTop;
+    const newStartY = baseY + startY;
+    const newEnd = baseY + endY;
+    const rootInnerHeight =
+      newRoot instanceof Element ? getInnerHeight(newRoot) : newRoot.innerHeight;
+    const newTrigger =
+      typeof trigger === "string"
+        ? Math.round((rootInnerHeight * parseInt(trigger, 10)) / 100)
+        : trigger;
     let state = "idle";
     let i = 0;
-    let prevProgress = (scrollY - startY) / (endY - startY);
-    let animated: string[] = [];
+    let prevProgress = limitRange((scrollY - startY) / (endY - startY));
 
-    this.#scrollLisners.forEach((listener) => {
-      window.removeEventListener("scroll", listener);
-    });
-    this.#scrollLisners = [];
+    /** 스크롤 실행 시 애니메이션 실행 */
+    const scrollRunner = ({
+      startProgress,
+      endProgress,
+      duration,
+      scheduleList,
+      onAnimationEnd,
+    }: Pick<
+      Parameters<typeof scheduleRunner>[0],
+      "startProgress" | "endProgress" | "duration" | "scheduleList" | "onAnimationEnd"
+    >) => {
+      scheduleRunner({
+        startProgress,
+        endProgress,
+        duration,
+        scheduleList,
+        onAnimationEnd: (data) => {
+          const { index } = data;
+          const diff = newEnd - newStartY;
+
+          if (index < scheduleLen - 1) {
+            return;
+          }
+          // console.log("> ", index, scheduleLen);
+
+          const currentScrollY = getScrollY(newRoot);
+          const currentProgress = limitRange((newTrigger + currentScrollY - newStartY) / diff);
+          prevProgress = endProgress;
+
+          if (endProgress !== currentProgress) {
+            scrollRunner({
+              startProgress: endProgress,
+              endProgress: currentProgress,
+              duration,
+              scheduleList,
+              onAnimationEnd,
+            });
+            return;
+          }
+
+          state = "idle";
+          if (onAnimationEnd) {
+            onAnimationEnd(data);
+          }
+        },
+      });
+    };
 
     /** 스크롤 이벤트 */
     const handleScroll = () => {
-      const scrollY = getScrollY(newRoot);
-      const progress = Math.max(Math.min((scrollY - startY) / (endY - startY), 1), 0);
       if (state === "running") {
         return;
       }
+
       state = "running";
       i = 0;
 
       throttle(() => {
-        while (i < len) {
-          const scrollY = getScrollY(newRoot);
-          const schedule = this.#schedule[i];
+        const scrollY = getScrollY(newRoot);
+        const diff = newEnd - newStartY;
+        const progress = limitRange((newTrigger + scrollY - newStartY) / diff);
+        console.log("> p: ", prevProgress.toFixed(2), progress.toFixed(2));
 
-          this.#scheduleProgress({
-            startProgress: prevProgress,
-            endProgress: progress,
-            duration,
-            schedule,
-            onAnimationEnd: ({ progress: currentProgress }) => {
-              // # 실행한 애니메이션 저장
-              if (!animated.includes(schedule.id)) {
-                animated.push(schedule.id);
-              }
-
-              // # 모든 매이메이션 실행 시
-              if (animated.length === len) {
-                prevProgress = progress;
-                state = "idle";
-                animated = [];
-
-                // console.log("> End: ", schedule.id, scrollY, window.scrollY);
-                if (
-                  progress !== currentProgress ||
-                  (progress.toFixed(3) === currentProgress.toFixed(3) && window.scrollY !== scrollY)
-                ) {
-                  handleScroll();
-                }
-              }
-            },
-          });
-
-          i++;
-        }
-      });
+        scrollRunner({
+          startProgress: prevProgress,
+          endProgress: progress,
+          duration,
+          scheduleList: this.#schedule,
+        });
+      }, 100);
     };
 
     handleScroll();
@@ -511,88 +557,101 @@ export class Paliga {
       i++;
     }
 
-    const animation = animations[animationIndex];
-    const isNormal = startProgress < endProgress;
-    const newStartProgress = isNormal ? startProgress : endProgress;
-    const newEndProgress = isNormal ? endProgress : startProgress;
-    const diff = newEndProgress - newStartProgress;
-
-    framer({
-      duration: duration ?? animation.duration,
-      startProgress: newStartProgress,
-      endProgress: newEndProgress,
-      onFrame: ({ progress }) => {
-        const newProgress =
-          isNormal || diff === 0
-            ? progress
-            : Math.max(
-                diff * (1 - (progress - newStartProgress) / diff) + newStartProgress,
-                newStartProgress,
-              );
-
-        const styles = this.#progressAnimationStyle({
-          maxDuration,
-          progress: newProgress,
-          animation,
-        });
-        const { x, y, opacity } = styles;
-
-        ApplyStyles.router({ el: element, x, y, opacity });
-      },
-      onDone: ({ progress }) => {
-        if (typeof onAnimationEnd === "function") {
-          onAnimationEnd({ progress });
-        }
-      },
+    animationsRunner({
+      startProgress,
+      endProgress,
+      duration,
+      maxDuration,
+      animations,
+      onAnimationEnd,
     });
+
+    // const filteredAnimations = rangeAnimations({ startProgress, endProgress, animations });
+    // const animation = filteredAnimations.shift();
+    // console.log("> ", maxDuration);
+
+    // const animation = animations[animationIndex];
+    // const isNormal = startProgress < endProgress;
+    // const newStartProgress = isNormal ? startProgress : endProgress;
+    // const newEndProgress = isNormal ? endProgress : startProgress;
+    // const diff = newEndProgress - newStartProgress;
+
+    // framer({
+    //   duration: duration ?? animation.duration,
+    //   startProgress: newStartProgress,
+    //   endProgress: newEndProgress,
+    //   onFrame: ({ progress }) => {
+    //     const newProgress =
+    //       isNormal || diff === 0
+    //         ? progress
+    //         : Math.max(
+    //             diff * (1 - (progress - newStartProgress) / diff) + newStartProgress,
+    //             newStartProgress,
+    //           );
+
+    //     const styles = getAnimationToStyle({
+    //       maxDuration,
+    //       progress: newProgress,
+    //       animation,
+    //     });
+    //     const { x, y, opacity } = styles;
+
+    //     ApplyStyles.router({ el: element, x, y, opacity });
+    //   },
+    //   onDone: (data) => {
+    //     if (typeof onAnimationEnd === "function") {
+    //       onAnimationEnd(data);
+    //     }
+    //   },
+    // });
   }
 
   /** 전체 progress 를 기준으로 지정된 animation 스타일 정보를 반환  */
-  #progressAnimationStyle({
-    maxDuration,
-    progress,
-    animation,
-  }: {
-    maxDuration: number;
-    progress: number;
-    animation: TAnimation;
-  }): TStylesState & { animationProgress: number } {
-    const { from, toDelay, to, easing = "linear", onFrame } = animation;
-    const startProgress = (toDelay ? toDelay.progress : from.progress) ?? 0;
-    const animationProgress = Math.min(this.#calcProgress(progress, startProgress, to.progress), 1);
-    const isDelay = animationProgress < 0;
-    const frame = onFrame
-      ? onFrame({ maxDuration, progress, animationProgress, animation })
-      : undefined;
-    const easingProgress =
-      frame?.progress ??
-      Easing.router({
-        progress: animationProgress,
-        easing,
-      });
+  // #progressAnimationStyle({
+  //   maxDuration,
+  //   progress,
+  //   animation,
+  // }: {
+  //   maxDuration: number;
+  //   progress: number;
+  //   animation: TAnimation;
+  // }): TStylesState & { animationProgress: number } {
+  //   const { from, toDelay, to, easing = "linear", onFrame } = animation;
+  //   const startProgress = (toDelay ? toDelay.progress : from.progress) ?? 0;
+  //   const animationProgress = Math.min(this.#calcProgress(progress, startProgress, to.progress), 1);
+  //   const isDelay = animationProgress < 0;
+  //   const frame = onFrame
+  //     ? onFrame({ maxDuration, progress, animationProgress, animation })
+  //     : undefined;
+  //   const easingProgress =
+  //     frame?.progress ??
+  //     Easing.router({
+  //       progress: animationProgress,
+  //       easing,
+  //     });
 
-    let x: number | undefined = from.x;
-    let y: number | undefined = from.y;
-    let opacity: number | undefined = from.opacity;
+  //   let x: number | undefined = from.x;
+  //   let y: number | undefined = from.y;
+  //   let opacity: number | undefined = from.opacity;
 
-    if (!isDelay) {
-      x = frame?.x ?? this.#calcValue(from.x, to.x, easingProgress);
-      y = frame?.y ?? this.#calcValue(from.y, to.y, easingProgress);
-      opacity = frame?.opacity ?? this.#calcValue(from.opacity, to.opacity, easingProgress);
-    }
+  //   if (!isDelay) {
+  //     x = frame?.x ?? this.#calcValue(from.x, to.x, easingProgress);
+  //     y = frame?.y ?? this.#calcValue(from.y, to.y, easingProgress);
+  //     opacity = frame?.opacity ?? this.#calcValue(from.opacity, to.opacity, easingProgress);
+  //   }
 
-    return {
-      animationProgress,
-      x,
-      y,
-      opacity,
-    };
-  }
+  //   return {
+  //     animationProgress,
+  //     x,
+  //     y,
+  //     opacity,
+  //   };
+  // }
 
   /** 지정된 구간의 진행도를 반환 */
-  #calcProgress = (progress: number, startProgress: number, endProgress: number) => {
-    return (progress - startProgress) / (endProgress - startProgress);
-  };
+  // #calcProgress = (progress: number, startProgress: number, endProgress: number) => {
+  //   return (progress - startProgress) / (endProgress - startProgress);
+  // };
 
   /** progres에 따른 값을 계산 */
   #calcValue(fromValue?: number, value?: number, progress: number = 0, isReverse = false) {
@@ -643,8 +702,6 @@ export class Paliga {
     const { maxDuration, animations, element } = schedule;
     let k = 0;
 
-    // console.log("> scheduleRunner: ", startProgress, schedule);
-
     framer({
       startProgress,
       endProgress,
@@ -656,7 +713,7 @@ export class Paliga {
           return;
         }
 
-        const { animationProgress, x, y, opacity } = this.#progressAnimationStyle({
+        const { animationProgress, x, y, opacity } = getAnimationToStyle({
           maxDuration,
           progress,
           animation,

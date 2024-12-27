@@ -32,6 +32,8 @@ type TIntersectingParams = {
 
 /** scrollProgress 파라메터 */
 export type TScrollProgressOptions = {
+  /** 트리거의 위치.(20%) */
+  trigger?: string | number;
   /** 시작 스크롤의 위치 */
   startY?: number;
   /** 종료 스크롤의 위치 */

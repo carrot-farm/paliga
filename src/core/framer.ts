@@ -55,4 +55,4 @@ export type TFramerParams = {
   onDone?: (params: TCallbackParams) => void;
 };
 
-type TCallbackParams = { progress: number; elapsed: number };
+export type TCallbackParams = { progress: number; elapsed: number };
