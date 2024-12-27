@@ -6,7 +6,7 @@ const MOCK_ANIMATION_1: TAnimation = {
   direction: "normal",
   delay: 0,
   duration: 1000,
-  sumDuration: 1000,
+  // sumDuration: 1000,
   element: MOCK_BOX_1,
   from: {
     duration: 0,

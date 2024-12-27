@@ -40,11 +40,11 @@ function TimelineTest4({ className }: TimelineTest4Props) {
           paliga.play();
         }}
       >
-        <TestSection.Box ref={box1} />
+        <TestSection.Box ref={box1}>iteration: 2</TestSection.Box>
       </TestSection>
 
       <TestSection
-        title="play({ infinity: `true` })"
+        title="play({ iteration: Infinity })"
         titleLink="timeline4-1"
         description="무한 애니메이션 반복. (모든 애니메이션 종료 후 다시 시작)"
         className="mt-4"
@@ -52,7 +52,7 @@ function TimelineTest4({ className }: TimelineTest4Props) {
           paliga2.play({ iteration: Infinity });
         }}
       >
-        <TestSection.Box ref={box2} />
+        <TestSection.Box ref={box2}>Infinity</TestSection.Box>
       </TestSection>
     </div>
   );

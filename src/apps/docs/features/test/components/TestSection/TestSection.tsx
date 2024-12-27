@@ -100,14 +100,12 @@ function TestSection({
 
       <div
         className={cn(
-          // "relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-500",
-          "relative mt-2 min-h-[140px] rounded-medium dark:border-gray-500",
+          "relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-600",
           classNames?.container,
         )}
         ref={containerRef}
-        style={{ padding: 8, border: "2px solid" }}
       >
-        <div className="relative" ref={innerContainerRef}>
+        <div className="relative min-h-[inherit]" ref={innerContainerRef}>
           {/* 스크롤 표시자 */}
           <ScrollProgressIndicator
             trigger={newScrollTrigger}

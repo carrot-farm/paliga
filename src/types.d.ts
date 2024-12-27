@@ -123,7 +123,7 @@ export type TSchedule = {
 
 export type TAnimation = {
   /** delay + duration */
-  sumDuration: number;
+  // sumDuration: number;
   /** 지연 상태 */
   toDelay?: Pick<TAnimationState, "duration" | "progress">;
   /** 시작 상태  */

@@ -96,7 +96,7 @@ export const getSchedule = ({
     while (j < tLen) {
       const transition = transitions[j];
       const curDelay = transition.delay ?? 0;
-      const sumDuration = transition.duration + curDelay;
+      // const sumDuration = transition.duration + curDelay;
 
       // # 시작점
       const fromDuration = prevAnimation ? prevAnimation.to.duration : 0;
@@ -124,9 +124,11 @@ export const getSchedule = ({
       const toDuration = toDelay
         ? toDelay.duration + transition.duration
         : from.duration + transition.duration;
+      const toProgress = j === tLen - 1 ? 1 : toDuration / totalDuration;
+
       const to: TAnimationState = {
         duration: toDuration,
-        progress: toDuration / totalDuration,
+        progress: toProgress,
         x: transition.x
           ? transition.direction === "reverse"
             ? -transition.x + (from.x ?? 0)
@@ -150,7 +152,7 @@ export const getSchedule = ({
 
       // 스케쥴
       const newAnimation: TAnimation = {
-        sumDuration,
+        // sumDuration,
         from,
         toDelay,
         to: newTo,

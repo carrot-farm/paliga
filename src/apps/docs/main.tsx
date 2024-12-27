@@ -3,7 +3,6 @@ import type { NavigateOptions } from "react-router-dom";
 import Providers from "./app/providers";
 import { BaseRoutes } from "./app/routes";
 
-import { StrictMode } from "react";
 import "./input.css";
 
 declare module "@react-types/shared" {
@@ -13,9 +12,12 @@ declare module "@react-types/shared" {
 }
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Providers>
-      <BaseRoutes />
-    </Providers>
-  </StrictMode>,
+  // <StrictMode>
+  //   <Providers>
+  //     <BaseRoutes />
+  //   </Providers>
+  // </StrictMode>,
+  <Providers>
+    <BaseRoutes />
+  </Providers>,
 );

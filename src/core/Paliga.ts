@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { animationsRunner, getAnimationToStyle } from "../helpers/animationHelpers";
+import { getAnimationToStyle } from "../helpers/animationHelpers";
 import { getSchedule, scheduleRunner } from "../helpers/scheduleHelpers";
 import { getInnerHeight } from "../helpers/styleHelpers";
 import {
@@ -38,6 +38,34 @@ export class Paliga {
     }
     this.#state = "running";
 
+    const runner = () => {
+      scheduleRunner({
+        startProgress: this.#progress,
+        endProgress: 1,
+        scheduleList: this.#schedule,
+        onFrame: ({ progress }) => {
+          this.#progress = progress;
+
+          if (this.#state === "paused") {
+            return false;
+          }
+        },
+        onAnimationEnd: (data) => {
+          const { index } = data;
+
+          if (onAnimationEnd) {
+            onAnimationEnd(data);
+          }
+
+          if (index < this.#schedule.length - 1) {
+            return;
+          }
+
+          allAnimationEnd();
+        },
+      });
+    };
+
     /** 모든 애니메이션 종료 시 콜백 */
     const allAnimationEnd = () => {
       // # 반복
@@ -48,24 +76,7 @@ export class Paliga {
 
         this.#progress = 0;
 
-        scheduleRunner({
-          startProgress: this.#progress,
-          endProgress: 1,
-          scheduleList: this.#schedule,
-          onAnimationEnd: (data) => {
-            const { index } = data;
-
-            if (onAnimationEnd) {
-              onAnimationEnd(data);
-            }
-
-            if (index < this.#schedule.length - 1) {
-              return;
-            }
-
-            allAnimationEnd();
-          },
-        });
+        runner();
         return;
       }
 
@@ -81,37 +92,7 @@ export class Paliga {
       }
     };
 
-    scheduleRunner({
-      startProgress: this.#progress,
-      endProgress: 1,
-      scheduleList: this.#schedule,
-      onFrame: ({ progress }) => {
-        this.#progress = progress;
-
-        if (this.#state === "paused") {
-          return false;
-        }
-      },
-      onAnimationEnd: (data) => {
-        const { index } = data;
-
-        if (onAnimationEnd) {
-          onAnimationEnd(data);
-        }
-
-        if (index < this.#schedule.length - 1) {
-          return;
-        }
-
-        allAnimationEnd();
-      },
-    });
-
-    // 실행
-    // this.#runner({
-    //   schedules: this.#schedule,
-    //   onAllAnimationEnd: allAnimationEnd,
-    // });
+    runner();
   }
 
   /** 교차 시 실행 */
@@ -207,8 +188,8 @@ export class Paliga {
       typeof trigger === "string"
         ? Math.round((rootInnerHeight * parseInt(trigger, 10)) / 100)
         : trigger;
-    let state = "idle";
     let i = 0;
+    let state = "idle";
     let prevProgress = limitRange((scrollY - startY) / (endY - startY));
 
     /** 스크롤 실행 시 애니메이션 실행 */
@@ -419,8 +400,6 @@ export class Paliga {
       segments: this.#segments,
     });
 
-    // console.log("> animate: ", this.#segments, this.#schedule);
-
     return this;
   }
 
@@ -446,50 +425,6 @@ export class Paliga {
     this.#intersectionObservers = [];
 
     return this;
-  }
-
-  /** 지정된 스케쥴을 progress에 따른 애니메이션 적용 */
-  #scheduleProgress({
-    startProgress = 0,
-    endProgress = startProgress,
-    duration,
-    schedule,
-    onAnimationEnd,
-  }: {
-    startProgress: number;
-    endProgress?: number;
-    duration?: number;
-    schedule: TSchedule;
-    onAnimationEnd?: (params: { progress: number }) => void;
-  }) {
-    const { maxDuration, animations } = schedule;
-    const elapsed = maxDuration * startProgress;
-    const len = animations.length;
-    let i = 0;
-    let accDuration = 0;
-    let animationIndex = 0;
-
-    // # 애니메이션 인덱스 찾기
-    while (i < len) {
-      const animation = animations[i];
-
-      accDuration += animation.sumDuration;
-
-      if (accDuration >= elapsed) {
-        animationIndex = i;
-        break;
-      }
-      i++;
-    }
-
-    animationsRunner({
-      startProgress,
-      endProgress,
-      duration,
-      maxDuration,
-      animations,
-      onAnimationEnd,
-    });
   }
 
   /** 스케쥴 엘리먼트 순회 */

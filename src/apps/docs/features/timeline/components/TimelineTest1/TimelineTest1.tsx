@@ -70,8 +70,8 @@ function TimelineTest1({ className }: TimelineTest1Props) {
         onPlay={() => paliga3.play()}
       >
         <TestSection.Box ref={box3_0} />
-        <TestSection.Box className="mt-2 bg-primary" ref={box3_1} />
-        <TestSection.Box className="mt-2 bg-success" ref={box3_2} />
+        <TestSection.Box className="mt-2" ref={box3_1} />
+        <TestSection.Box className="mt-2" ref={box3_2} />
       </TestSection>
     </div>
   );

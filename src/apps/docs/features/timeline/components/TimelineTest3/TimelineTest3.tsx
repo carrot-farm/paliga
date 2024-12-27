@@ -44,14 +44,16 @@ function TimelineTest3({ className }: TimelineTest3Props) {
       <TestSection
         title="delay: `number`"
         titleLink="timeline3-0"
-        description="지정된 시간(ms)만큼 애니메이션의 시작 시간을 지연"
+        description="애니메이션의 시작 시간을 지연"
         onPlay={() => {
           paliga.play();
           paliga2.play();
         }}
       >
         <TestSection.Box ref={box1} />
-        <TestSection.Box className="mt-2 bg-danger" ref={box2} />
+        <TestSection.Box className="mt-2" ref={box2}>
+          delay: 1000
+        </TestSection.Box>
       </TestSection>
 
       <TestSection
@@ -61,9 +63,9 @@ function TimelineTest3({ className }: TimelineTest3Props) {
         className="mt-4"
         onPlay={() => paliga3.play()}
       >
-        <TestSection.Box ref={box3_0} />
-        <TestSection.Box className="mt-2 bg-primary" ref={box3_1} />
-        <TestSection.Box className="mt-2 bg-success" ref={box3_2} />
+        <TestSection.Box ref={box3_0}></TestSection.Box>
+        <TestSection.Box className="mt-2" ref={box3_1}></TestSection.Box>
+        <TestSection.Box className="mt-2" ref={box3_2}></TestSection.Box>
       </TestSection>
     </div>
   );
