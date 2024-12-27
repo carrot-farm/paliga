@@ -180,10 +180,6 @@ export const animationsRunner = ({
         animation,
       });
 
-      if (onFrame) {
-        onFrame({ progress: newProgress, elapsed });
-      }
-
       // 엘리먼트에 스타일 적용
       ApplyStyles.router({
         el: animation.element,
@@ -191,6 +187,10 @@ export const animationsRunner = ({
         y: styles.y,
         opacity: styles.opacity,
       });
+
+      if (onFrame) {
+        return onFrame({ progress: newProgress, elapsed });
+      }
     },
     onDone: ({ elapsed }) => {
       if (onAnimationEnd) {

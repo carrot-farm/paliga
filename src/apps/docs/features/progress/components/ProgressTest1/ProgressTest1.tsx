@@ -15,18 +15,18 @@ function ProgressTest1({ className }: ProgressTest1Props) {
   useEffect(() => {
     if (box1.current && box2.current) {
       paliga
-        .animate([box1.current, box2.current], {
+        .timeline([box1.current, box2.current], {
           x: 100,
           duration: 1000,
           each: (_, i) => ({ delay: i * 200 }),
         })
-        .animate({
+        .timeline({
           y: 40,
           x: 50,
           duration: 1000,
           each: (_, i) => ({ delay: i * 200 }),
         })
-        .animate({
+        .timeline({
           x: 50,
           duration: 1000,
           each: (_, i) => ({ delay: i * 200 }),

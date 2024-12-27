@@ -74,9 +74,6 @@
     "vitest": "^2.1.8"
   },
   "lint-staged": {
-    "*.{ts,tsx,d.ts,js,jsx,css}": "prettier --write",
-    "./apps/web/**/*.{ts,tsx,d.ts}": [
-      "bash -c 'cd ./apps/web && tsc --noEmit'"
-    ]
+    "*.{ts,tsx,d.ts,js,jsx,css}": "prettier --write"
   }
 }

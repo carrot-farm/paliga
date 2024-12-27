@@ -1,15 +1,21 @@
 import { CSSProperties } from "react";
+import { TScheduleRunnerOnParams } from "./helpers/scheduleHelpers";
 
 /** ==== 메소드 옵션 ==== */
 export type TPlayOptions = {
   /** 반복 횟수 */
   iteration?: number;
+  /** 애니메이션 종료 시 콜백 */
+  onAnimationEnd?: (data: TScheduleRunnerOnParams) => void;
   /** 모든 애니메이션 종료 시 콜백 */
   onAllAnimationEnd?: (data: { segments?: TSegment[] }) => void;
 };
 
 /** animate 함수 호출 시 옵션 */
-export type TAnimateOptions = { style?: CSSProperties } & Pick<TTransition, "duration"> &
+export type TAnimateOptions = {
+  /** animate 시 사전 적용될 스타일 */
+  beforeStyle?: (index: number) => CSSProperties;
+} & Pick<TTransition, "duration"> &
   Partial<Omit<TTransition, "id" | "groupId" | "duration">>;
 
 /** insersection 옵션 */
@@ -52,7 +58,7 @@ export type TEachState = Pick<TTransition, "direction" | "easing" | "x" | "y" | 
 /** 하나의 엘리먼트에 적용될 애니메이션 정보 */
 export type TTransition = {
   /** animate의 인덱스 */
-  animateIndex: number;
+  // animateIndex: number;
   /** 진행방향 */
   direction: TDirection;
   /** 애니메이션 적용 형태 */

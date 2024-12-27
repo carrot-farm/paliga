@@ -17,12 +17,12 @@ function ScrollProgressTest1({ className }: ScrollProgressTest1Props) {
   useEffect(() => {
     if (box1.current && containerRef1.current && box2.current) {
       paliga
-        .animate([box1.current, box2.current], {
+        .timeline([box1.current, box2.current], {
           x: 100,
           y: 80,
           duration: 1000,
         })
-        .animate({
+        .timeline({
           y: 100,
           x: 100,
           duration: 1000,

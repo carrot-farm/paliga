@@ -19,7 +19,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
   useEffect(() => {
     if (box1.current) {
       paliga
-        .animate([box1.current], {
+        .timeline([box1.current], {
           x: 200,
           duration: 1000,
         })
@@ -30,7 +30,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
 
     if (box2.current && box3.current) {
       paliga2
-        .animate([box2.current, box3.current], {
+        .timeline([box2.current, box3.current], {
           x: 200,
           duration: 1000,
         })
@@ -41,7 +41,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
 
     if (box4.current) {
       paliga3
-        .animate([box4.current], {
+        .timeline([box4.current], {
           x: 200,
           duration: 1000,
         })
@@ -52,7 +52,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
 
     if (box5.current) {
       paliga4
-        .animate([box5.current], {
+        .timeline([box5.current], {
           x: 200,
           duration: 1000,
         })

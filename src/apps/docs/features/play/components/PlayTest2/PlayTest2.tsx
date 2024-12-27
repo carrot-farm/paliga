@@ -11,7 +11,7 @@ function PlayTest2({ className }: PlayTest2Props) {
 
   useEffect(() => {
     if (box1.current) {
-      paliga.animate([box1.current], {
+      paliga.timeline([box1.current], {
         x: 200,
         duration: 1000,
         direction: "alternate",
@@ -26,7 +26,7 @@ function PlayTest2({ className }: PlayTest2Props) {
         titleLink="play2-0"
         description="실행중인 애니메이션을 중단"
         onPause={() => paliga.pause()}
-        onPlay={() => paliga.play({ infinity: true })}
+        onPlay={() => paliga.play({ iteration: Infinity })}
       >
         <TestSection.Box key={`play2-0`} ref={box1} />
       </TestSection>

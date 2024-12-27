@@ -18,7 +18,7 @@ function TimelineTest1({ className }: TimelineTest1Props) {
 
   useEffect(() => {
     if (box1.current) {
-      paliga.animate([box1.current], {
+      paliga.timeline([box1.current], {
         x: 200,
         duration: 2000,
       });
@@ -26,18 +26,18 @@ function TimelineTest1({ className }: TimelineTest1Props) {
 
     if (box2.current) {
       paliga2
-        .animate([box2.current], {
+        .timeline([box2.current], {
           x: 200,
           duration: 1000,
         })
-        .animate({
+        .timeline({
           y: 100,
           duration: 1000,
         });
     }
 
     if (box3_0.current && box3_1.current && box3_2.current) {
-      paliga3.animate([box3_0.current, box3_1.current, box3_2.current], {
+      paliga3.timeline([box3_0.current, box3_1.current, box3_2.current], {
         x: 200,
         duration: 1000,
       });

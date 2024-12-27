@@ -15,21 +15,21 @@ function PlayTest3({ className }: PlayTest3Props) {
 
   useEffect(() => {
     if (box1.current) {
-      paliga.animate([box1.current], {
+      paliga.timeline([box1.current], {
         x: 200,
         duration: 1000,
       });
     }
 
     if (box2.current) {
-      paliga2.animate([box2.current], {
+      paliga2.timeline([box2.current], {
         x: 200,
         duration: 1000,
       });
     }
 
     if (box3.current) {
-      paliga3.animate([box3.current], {
+      paliga3.timeline([box3.current], {
         x: 200,
         duration: 1000,
       });

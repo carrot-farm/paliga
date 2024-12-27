@@ -16,7 +16,7 @@ function TimelineTest2({ className }: TimelineTest2Props) {
 
   useEffect(() => {
     if (box0.current) {
-      paliga0.animate([box0.current], {
+      paliga0.timeline([box0.current], {
         direction: "normal",
         x: 100,
         duration: 1000,
@@ -24,7 +24,7 @@ function TimelineTest2({ className }: TimelineTest2Props) {
     }
 
     if (box1.current) {
-      paliga.animate([box1.current], {
+      paliga.timeline([box1.current], {
         direction: "reverse",
         x: 100,
         duration: 1000,
@@ -32,7 +32,7 @@ function TimelineTest2({ className }: TimelineTest2Props) {
     }
 
     if (box2.current) {
-      paliga2.animate([box2.current], {
+      paliga2.timeline([box2.current], {
         direction: "alternate",
         x: 100,
         duration: 1000,

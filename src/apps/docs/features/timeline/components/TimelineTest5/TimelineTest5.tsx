@@ -15,7 +15,7 @@ function TimelineTest5({ className }: TimelineTest5Props) {
 
   useEffect(() => {
     if (boxes.current.length > 0) {
-      paliga.animate(boxes.current, {
+      paliga.timeline(boxes.current, {
         x: 200,
         duration: 1000,
         each: (_, i) => ({ easing: easing[i] }),
@@ -23,7 +23,7 @@ function TimelineTest5({ className }: TimelineTest5Props) {
     }
 
     if (box2.current) {
-      paliga2.animate([box2.current], {
+      paliga2.timeline([box2.current], {
         easing: [0.68, -0.55, 0.265, 1.55],
         x: 200,
         duration: 1000,

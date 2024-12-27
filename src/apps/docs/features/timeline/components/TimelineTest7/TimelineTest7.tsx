@@ -18,7 +18,7 @@ function TimelineTest7({ className }: TimelineTest7Props) {
       const startY = 0;
       const maxY = 90;
 
-      paliga.animate([box1.current], {
+      paliga.timeline([box1.current], {
         x: 200,
         duration: 1000,
         onFrame: ({ progress }) => ({
@@ -29,7 +29,7 @@ function TimelineTest7({ className }: TimelineTest7Props) {
     }
 
     if (box2.current) {
-      paliga2.animate(box2.current, {
+      paliga2.timeline(box2.current, {
         x: 200,
         duration: 1000,
       });

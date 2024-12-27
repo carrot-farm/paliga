@@ -13,7 +13,7 @@ function TimelineTest6({ className }: TimelineTest6Props) {
 
   useEffect(() => {
     if (box1.current.length > 0) {
-      paliga.animate(box1.current, {
+      paliga.timeline(box1.current, {
         x: 200,
         duration: 1000,
         each: (_, i) => each[i],
@@ -21,7 +21,7 @@ function TimelineTest6({ className }: TimelineTest6Props) {
     }
 
     if (box2.current) {
-      paliga2.animate(box2.current, {
+      paliga2.timeline(box2.current, {
         x: 200,
         duration: 1000,
       });

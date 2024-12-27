@@ -13,7 +13,7 @@ function TimelineTest4({ className }: TimelineTest4Props) {
 
   useEffect(() => {
     if (box1.current) {
-      paliga.animate([box1.current], {
+      paliga.timeline([box1.current], {
         iteration: 2,
         direction: "alternate",
         x: 200,
@@ -22,7 +22,7 @@ function TimelineTest4({ className }: TimelineTest4Props) {
     }
 
     if (box2.current) {
-      paliga2.animate([box2.current], {
+      paliga2.timeline([box2.current], {
         direction: "alternate",
         x: 200,
         duration: 1000,
@@ -49,7 +49,7 @@ function TimelineTest4({ className }: TimelineTest4Props) {
         description="무한 애니메이션 반복. (모든 애니메이션 종료 후 다시 시작)"
         className="mt-4"
         onPlay={() => {
-          paliga2.play({ infinity: true });
+          paliga2.play({ iteration: Infinity });
         }}
       >
         <TestSection.Box ref={box2} />

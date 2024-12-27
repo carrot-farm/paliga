@@ -15,7 +15,7 @@ function IntersectionPlayTest1({ className }: IntersectionPlayTest1Props) {
   useEffect(() => {
     if (box1.current) {
       paliga
-        .animate([box1.current], {
+        .timeline([box1.current], {
           x: 200,
           duration: 1000,
         })
@@ -26,7 +26,7 @@ function IntersectionPlayTest1({ className }: IntersectionPlayTest1Props) {
 
     if (box2.current && box3.current) {
       paliga2
-        .animate([box2.current, box3.current], {
+        .timeline([box2.current, box3.current], {
           x: 200,
           duration: 1000,
         })
