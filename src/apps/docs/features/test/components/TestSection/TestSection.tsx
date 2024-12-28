@@ -1,6 +1,7 @@
 "use client";
 import { Button, cn, Link } from "@nextui-org/react";
 import { forwardRef, ReactNode, Ref, RefObject, useEffect, useRef, useState } from "react";
+import { Paliga } from "../../../../../../core/Paliga";
 
 /** ===== Components ===== */
 /** 기본 테스트 */
@@ -18,12 +19,28 @@ function TestSection({
   scrollTargetEl,
   onPlay,
   onPause,
+  onReady,
 }: TestSectionProps) {
   const innerContainerRef = useRef<HTMLDivElement>(null);
+  const paligaRef = useRef<Paliga | undefined>(undefined);
   const [newScrollStart, setNewScrollStart] = useState<number>();
   const [newScrollEnd, setNewScrollEnd] = useState<number>();
   const [newScrollTrigger, setNewScrollTrigger] = useState<number>();
 
+  // # onReady
+  useEffect(() => {
+    if (!paligaRef.current) {
+      paligaRef.current = new Paliga();
+    }
+
+    if (!onReady || !paligaRef.current) {
+      return;
+    }
+
+    onReady({ paliga: paligaRef.current });
+  }, []);
+
+  // # 스크롤 트리거
   useEffect(() => {
     if (!innerContainerRef.current || !scrollTrigger || !containerRef?.current) {
       return;
@@ -48,6 +65,7 @@ function TestSection({
     setNewScrollTrigger(newScrollTrigger);
   }, [scrollTrigger]);
 
+  // # 스크롤 start, end
   useEffect(() => {
     if (!containerRef?.current || !innerContainerRef.current || !scrollTargetEl) {
       return;
@@ -56,8 +74,8 @@ function TestSection({
     const innerContainerY = innerContainerRef.current.getBoundingClientRect().y;
     const targetY = scrollTargetEl.getBoundingClientRect().y;
     const baseY = targetY - innerContainerY;
-    const newScrollStart = (scrollStart ?? 0) + baseY;
-    const newScrollEnd = (scrollEnd ?? 0) + baseY;
+    const newScrollStart = scrollStart !== undefined ? scrollStart + baseY : undefined;
+    const newScrollEnd = scrollEnd !== undefined ? scrollEnd + baseY : undefined;
 
     setNewScrollStart(newScrollStart);
     setNewScrollEnd(newScrollEnd);
@@ -80,18 +98,28 @@ function TestSection({
 
       <div className="flex items-center gap-x-2">
         <div className="flex-1">
-          {description && <p className="mt-2 text-xs text-gray-500">{description}</p>}
+          {description && <p className="mt-2 text-xs text-gray-400">{description}</p>}
         </div>
 
         <div className="flex items-center gap-x-2">
           {onPause && (
-            <Button color="danger" variant="shadow" size="sm" onPress={onPause}>
+            <Button
+              color="danger"
+              variant="shadow"
+              size="sm"
+              onPress={() => onPause({ paliga: paligaRef.current })}
+            >
               Pause
             </Button>
           )}
 
           {onPlay && (
-            <Button color="warning" variant="shadow" size="sm" onPress={onPlay}>
+            <Button
+              color="warning"
+              variant="shadow"
+              size="sm"
+              onPress={() => onPlay({ paliga: paligaRef.current })}
+            >
               Play
             </Button>
           )}
@@ -99,13 +127,13 @@ function TestSection({
       </div>
 
       <div
-        className={cn(
-          "relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-600",
-          classNames?.container,
-        )}
+        className={cn("relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-600")}
         ref={containerRef}
       >
-        <div className="relative min-h-[inherit]" ref={innerContainerRef}>
+        <div
+          className={cn("relative flex min-h-[inherit] flex-col gap-y-2", classNames?.container)}
+          ref={innerContainerRef}
+        >
           {/* 스크롤 표시자 */}
           <ScrollProgressIndicator
             trigger={newScrollTrigger}
@@ -212,9 +240,11 @@ export type TestSectionProps = {
   /** container의 ref */
   containerRef?: RefObject<HTMLDivElement>;
   /** 플레이 시 콜백 */
-  onPlay?: () => void;
+  onPlay?: ({ paliga }: { paliga?: Paliga }) => void;
   /** 플레이 시 콜백 */
-  onPause?: () => void;
+  onPause?: ({ paliga }: { paliga?: Paliga }) => void;
+  /** 인스턴스 생성 완료 후 콜백 */
+  onReady?: ({ paliga }: { paliga: Paliga }) => void;
 };
 
 TestSection.Box = Box;

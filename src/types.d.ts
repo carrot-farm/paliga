@@ -5,6 +5,10 @@ import { TScheduleRunnerOnParams } from "./helpers/scheduleHelpers";
 export type TPlayOptions = {
   /** 반복 횟수 */
   iteration?: number;
+  /** 지정된 진행도부터 실행 */
+  startProgress?: number;
+  /** 지정된 진행도까지만 실행 */
+  endProgress?: number;
   /** 애니메이션 종료 시 콜백 */
   onAnimationEnd?: (data: TScheduleRunnerOnParams) => void;
   /** 모든 애니메이션 종료 시 콜백 */
@@ -13,10 +17,11 @@ export type TPlayOptions = {
 
 /** animate 함수 호출 시 옵션 */
 export type TAnimateOptions = {
+  /** 애니메이션 실행 시간 */
+  duration?: number;
   /** animate 시 사전 적용될 스타일 */
   beforeStyle?: (index: number) => CSSProperties;
-} & Pick<TTransition, "duration"> &
-  Partial<Omit<TTransition, "id" | "groupId" | "duration">>;
+} & Partial<Omit<TTransition, "id" | "groupId" | "duration">>;
 
 /** insersection 옵션 */
 export type TIntersectionPlayOptions = {

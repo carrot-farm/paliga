@@ -5,7 +5,7 @@ import { usePaliga } from "../../../../shared/hooks/usePaliga";
 import { TestSection } from "../../../test/components/TestSection";
 
 /** ===== Components ===== */
-function PlayTest2({ className }: PlayTest2Props) {
+function PauseTest1({ className }: PauseTest1Props) {
   const box1 = useRef<HTMLDivElement>(null);
   const { paliga } = usePaliga();
 
@@ -37,9 +37,9 @@ function PlayTest2({ className }: PlayTest2Props) {
 /** ===== Others ===== */
 
 /** ===== Types ===== */
-export type PlayTest2Props = {
+export type PauseTest1Props = {
   /** class */
   className?: string;
 };
 
-export default PlayTest2;
+export default PauseTest1;

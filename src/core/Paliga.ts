@@ -13,7 +13,7 @@ import {
 } from "../types";
 import { ApplyStyles } from "./ApplyStyles";
 import { framer } from "./framer";
-import { throttle } from "./timeUtils";
+import { timeoutFn } from "./timeUtils";
 
 export class Paliga {
   #state: "idle" | "running" | "paused" = "idle";
@@ -30,8 +30,19 @@ export class Paliga {
   }
 
   /** 연속 실행기 */
-  play({ iteration, onAnimationEnd, onAllAnimationEnd }: TPlayOptions = {}) {
+  play({
+    iteration,
+    startProgress = 0,
+    endProgress = 1,
+    onAnimationEnd,
+    onAllAnimationEnd,
+  }: TPlayOptions = {}) {
     let newIteration = iteration;
+    let instance = this;
+
+    if (startProgress !== undefined) {
+      this.#progress = startProgress;
+    }
 
     if (this.#state === "running") {
       return;
@@ -40,11 +51,11 @@ export class Paliga {
 
     const runner = () => {
       scheduleRunner({
-        startProgress: this.#progress,
-        endProgress: 1,
+        startProgress,
+        endProgress,
         scheduleList: this.#schedule,
         onFrame: ({ progress }) => {
-          this.#progress = progress;
+          instance.#progress = progress;
 
           if (this.#state === "paused") {
             return false;
@@ -74,14 +85,14 @@ export class Paliga {
           newIteration--;
         }
 
-        this.#progress = 0;
+        instance.#progress = 0;
 
         runner();
         return;
       }
 
       this.#state = "idle";
-      this.#progress = 0;
+      instance.#progress = 0;
 
       // # 모든 애니메이션 종료 시 호출
       if (
@@ -165,6 +176,7 @@ export class Paliga {
     const getScrollY = (el: HTMLElement | Window) =>
       "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
     const limitRange = (num: number) => Math.max(Math.min(num, 1), 0);
+
     const newRoot = root ?? window;
     const scrollY = getScrollY(newRoot);
     const scheduleLen = this.#schedule.length;
@@ -188,7 +200,7 @@ export class Paliga {
       typeof trigger === "string"
         ? Math.round((rootInnerHeight * parseInt(trigger, 10)) / 100)
         : trigger;
-    let i = 0;
+    const throttle = timeoutFn("throttle");
     let state = "idle";
     let prevProgress = limitRange((scrollY - startY) / (endY - startY));
 
@@ -215,7 +227,6 @@ export class Paliga {
           if (index < scheduleLen - 1) {
             return;
           }
-          // console.log("> ", index, scheduleLen);
 
           const currentScrollY = getScrollY(newRoot);
           const currentProgress = limitRange((newTrigger + currentScrollY - newStartY) / diff);
@@ -247,12 +258,11 @@ export class Paliga {
       }
 
       state = "running";
-      i = 0;
 
       throttle(() => {
-        const scrollY = getScrollY(newRoot);
+        const newScrollY = getScrollY(newRoot);
         const diff = newEnd - newStartY;
-        const progress = limitRange((newTrigger + scrollY - newStartY) / diff);
+        const progress = limitRange((newTrigger + newScrollY - newStartY) / diff);
         // console.log("> p: ", prevProgress.toFixed(2), progress.toFixed(2));
 
         scrollRunner({

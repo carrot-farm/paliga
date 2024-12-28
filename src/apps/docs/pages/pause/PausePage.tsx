@@ -1,21 +1,16 @@
 "use client";
 import { Accordion, AccordionItem } from "@nextui-org/react";
-import { PlayTest1 } from "../../features/play/components/PlayTest1";
-import { PlayTest3 } from "../../features/play/components/PlayTest3";
+import { PauseTest1 } from "../../features/pause/components/PauseTest1";
 
 /** ===== Components ===== */
-function PlayPage({}: Timelinerops) {
+function PausePage({}: Timelinerops) {
   return (
     <Accordion
       selectionMode="multiple"
       defaultExpandedKeys={Array.from({ length: 3 }, (_, i) => String(i))}
     >
-      <AccordionItem title="애니메이션 실행" key="0">
-        <PlayTest1 />
-      </AccordionItem>
-
-      <AccordionItem title="옵션" key="1">
-        <PlayTest3 />
+      <AccordionItem title="애니메이션 중단" key="1">
+        <PauseTest1 />
       </AccordionItem>
     </Accordion>
   );
@@ -26,4 +21,4 @@ function PlayPage({}: Timelinerops) {
 /** ===== Types ===== */
 export type Timelinerops = {};
 
-export default PlayPage;
+export default PausePage;

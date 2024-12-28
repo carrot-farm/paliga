@@ -1,5 +1,5 @@
 /** debounce & throttle */
-const timeoutFn = (type: "debounce" | "throttle") => {
+export const timeoutFn = (type: "debounce" | "throttle") => {
   let throttleFn: ReturnType<typeof setTimeout> | null;
   let debounceFn: ReturnType<typeof setTimeout>;
   let lastFn: (() => void) | null;

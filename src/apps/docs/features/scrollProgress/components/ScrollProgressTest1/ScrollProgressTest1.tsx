@@ -8,11 +8,9 @@ import { TestSection } from "../../../test/components/TestSection";
 function ScrollProgressTest1({ className }: ScrollProgressTest1Props) {
   const box1 = useRef<HTMLDivElement>(null);
   const box2 = useRef<HTMLDivElement>(null);
-  const box3 = useRef<HTMLDivElement>(null);
   const containerRef1 = useRef<HTMLDivElement>(null);
   const { paliga } = usePaliga();
-  const { paliga: paliga2 } = usePaliga();
-  const [box1Y, setBox1Y] = useState<number>();
+  const [, setIsReady] = useState(false);
 
   useEffect(() => {
     if (box1.current && containerRef1.current && box2.current) {
@@ -20,12 +18,10 @@ function ScrollProgressTest1({ className }: ScrollProgressTest1Props) {
         .timeline([box1.current, box2.current], {
           x: 100,
           y: 80,
-          duration: 1000,
         })
         .timeline({
           y: 100,
           x: 100,
-          duration: 1000,
         })
         .scrollProgress({
           trigger: "20%",
@@ -35,16 +31,9 @@ function ScrollProgressTest1({ className }: ScrollProgressTest1Props) {
           root: containerRef1.current,
         });
     }
-  }, []);
 
-  useEffect(() => {
-    if (!box1.current) {
-      return;
-    }
-    const { y } = box1.current.getBoundingClientRect();
-    setBox1Y(y);
+    setIsReady(true);
   }, []);
-  // console.log(">> ", box1Y);
 
   return (
     <div className={cn("flex flex-col gap-y-4", className)}>
@@ -65,23 +54,6 @@ function ScrollProgressTest1({ className }: ScrollProgressTest1Props) {
         <TestSection.Box className="mt-8" ref={box2} />
         <div className="h-[400px]"></div>
       </TestSection>
-
-      {/* 
-      <TestSection
-        titleLink="intersection-play1-1"
-        description="각각의 엘리먼트별 지정 가능"
-        classNames={{
-          container: "h-[140px] overflow-y-auto overflow-x-hidden",
-        }}
-      >
-        <div className="h-[200px]"></div>
-        <TestSection.Box ref={box2} />
-
-        <div className="h-[200px]"></div>
-        <TestSection.Box ref={box3} />
-
-        <div className="h-[50px]"></div>
-      </TestSection> */}
     </div>
   );
 }

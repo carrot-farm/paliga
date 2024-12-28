@@ -15,7 +15,7 @@ function TimelinePage({}: Timelinerops) {
     <>
       <Accordion
         selectionMode="multiple"
-        defaultExpandedKeys={Array.from({ length: 7 }, (_, i) => String(i + 1))}
+        defaultExpandedKeys={Array.from({ length: 8 }, (_, i) => String(i + 1))}
       >
         <AccordionItem title="기본 사용법" key="1">
           <TimelineTest1 />
