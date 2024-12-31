@@ -3,8 +3,6 @@ import type { NavigateOptions } from "react-router-dom";
 import Providers from "./app/providers";
 import { BaseRoutes } from "./app/routes";
 
-import "./input.css";
-
 declare module "@react-types/shared" {
   interface RouterConfig {
     routerOptions: NavigateOptions;

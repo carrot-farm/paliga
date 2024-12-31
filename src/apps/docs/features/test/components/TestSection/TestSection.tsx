@@ -1,7 +1,8 @@
 "use client";
-import { Button, cn, Link } from "@nextui-org/react";
+import { cn, Link } from "@nextui-org/react";
 import { forwardRef, ReactNode, Ref, RefObject, useEffect, useRef, useState } from "react";
 import { Paliga } from "../../../../../../core/Paliga";
+import TestSectionController from "./TestSectionController";
 
 /** ===== Components ===== */
 /** 기본 테스트 */
@@ -13,7 +14,9 @@ function TestSection({
   scrollTrigger,
   scrollStart,
   scrollEnd,
+  hideController,
   classNames,
+  paliga,
   children,
   containerRef,
   scrollTargetEl,
@@ -22,7 +25,8 @@ function TestSection({
   onReady,
 }: TestSectionProps) {
   const innerContainerRef = useRef<HTMLDivElement>(null);
-  const paligaRef = useRef<Paliga | undefined>(undefined);
+  const paligaRef = useRef<Paliga | null>(null);
+  const [isReady, setIsReady] = useState(false);
   const [newScrollStart, setNewScrollStart] = useState<number>();
   const [newScrollEnd, setNewScrollEnd] = useState<number>();
   const [newScrollTrigger, setNewScrollTrigger] = useState<number>();
@@ -30,10 +34,14 @@ function TestSection({
   // # onReady
   useEffect(() => {
     if (!paligaRef.current) {
-      paligaRef.current = new Paliga();
+      paligaRef.current = paliga ?? new Paliga();
+      // paligaRef.current = paliga;
     }
 
-    if (!onReady || !paligaRef.current) {
+    paligaRef.current.initialize();
+    setIsReady(true);
+
+    if (!onReady) {
       return;
     }
 
@@ -81,7 +89,6 @@ function TestSection({
     setNewScrollEnd(newScrollEnd);
   }, [containerRef, scrollTargetEl, scrollStart, scrollEnd]);
 
-  // console.log("> ? : ", containerY);
   return (
     <section className={cn("flex flex-col", className)}>
       {title &&
@@ -100,48 +107,32 @@ function TestSection({
         <div className="flex-1">
           {description && <p className="mt-2 text-xs text-gray-400">{description}</p>}
         </div>
-
-        <div className="flex items-center gap-x-2">
-          {onPause && (
-            <Button
-              color="danger"
-              variant="shadow"
-              size="sm"
-              onPress={() => onPause({ paliga: paligaRef.current })}
-            >
-              Pause
-            </Button>
-          )}
-
-          {onPlay && (
-            <Button
-              color="warning"
-              variant="shadow"
-              size="sm"
-              onPress={() => onPlay({ paliga: paligaRef.current })}
-            >
-              Play
-            </Button>
-          )}
-        </div>
       </div>
 
       <div
-        className={cn("relative mt-2 min-h-[140px] rounded-medium border p-2 dark:border-gray-600")}
+        className={cn(
+          "relative mt-2 min-h-[140px] overflow-hidden rounded-medium border p-2 dark:border-gray-600",
+          classNames?.container,
+        )}
         ref={containerRef}
       >
-        <div
-          className={cn("relative flex min-h-[inherit] flex-col gap-y-2", classNames?.container)}
-          ref={innerContainerRef}
-        >
+        <div className={cn("relative min-h-[inherit]")} ref={innerContainerRef}>
           {/* 스크롤 표시자 */}
           <ScrollProgressIndicator
             trigger={newScrollTrigger}
             start={newScrollStart}
             end={newScrollEnd}
           />
+          <div className="min-h-[120px]">{children}</div>
 
-          {children}
+          {!hideController && isReady && paligaRef.current && (
+            <TestSectionController
+              className="mt-2"
+              paliga={paligaRef.current}
+              onPlay={({ paliga }) => onPlay && onPlay({ paliga })}
+              onPause={({ paliga }) => onPause && onPause({ paliga })}
+            />
+          )}
         </div>
       </div>
     </section>
@@ -228,6 +219,8 @@ export type TestSectionProps = {
   scrollStart?: number;
   /** scroll progress 의 trigger 표시 */
   scrollEnd?: number;
+  /** true 일 경우 컨트롤러 감추기 */
+  hideController?: boolean;
   /** scroll progress 의 대상이 될 첫번째 엘리먼트의 Y */
   scrollTargetEl?: HTMLDivElement | null;
   /** 하위 요소의 클래스 */
@@ -235,6 +228,8 @@ export type TestSectionProps = {
     /** 자식 요소 래퍼의 클래스 */
     container?: string;
   };
+  /** paliga 인스턴스 */
+  paliga?: Paliga;
   /** children */
   children?: ReactNode;
   /** container의 ref */
@@ -248,5 +243,6 @@ export type TestSectionProps = {
 };
 
 TestSection.Box = Box;
+TestSection.Controller = TestSectionController;
 
 export default TestSection;

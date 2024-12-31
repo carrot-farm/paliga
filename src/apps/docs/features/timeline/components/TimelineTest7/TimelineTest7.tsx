@@ -1,40 +1,11 @@
 "use client";
 import { cn } from "@nextui-org/react";
-import { useEffect, useRef } from "react";
-import { usePaliga } from "../../../../shared/hooks/usePaliga";
+import { useRef } from "react";
 import { TestSection } from "../../../test/components/TestSection";
 
 /** ===== Components ===== */
 function TimelineTest7({ className }: TimelineTest7Props) {
   const box1 = useRef<HTMLDivElement | null>(null);
-  const box2 = useRef<HTMLDivElement[]>([]);
-  const { paliga } = usePaliga();
-  const { paliga: paliga2 } = usePaliga();
-
-  useEffect(() => {
-    if (box1.current) {
-      const startX = 0;
-      const endX = 210;
-      const startY = 0;
-      const maxY = 90;
-
-      paliga.timeline([box1.current], {
-        x: 200,
-        duration: 1000,
-        onFrame: ({ progress }) => ({
-          x: startX + (endX - startX) * progress,
-          y: startY - maxY * (4 * progress * (1 - progress)),
-        }),
-      });
-    }
-
-    if (box2.current) {
-      paliga2.timeline(box2.current, {
-        x: 200,
-        duration: 1000,
-      });
-    }
-  }, []);
 
   return (
     <div className={cn(className)}>
@@ -42,7 +13,22 @@ function TimelineTest7({ className }: TimelineTest7Props) {
         title="onFrame()"
         titleLink="timeline5-0"
         description="매프레임마다 적용되는 값을 변경"
-        onPlay={() => paliga.play()}
+        onReady={({ paliga }) => {
+          const startX = 0;
+          const endX = 210;
+          const startY = 0;
+          const maxY = 80;
+
+          paliga.timeline([box1.current!], {
+            x: 200,
+            duration: 1000,
+            onFrame: ({ progress }) => ({
+              x: startX + (endX - startX) * progress,
+              y: startY - maxY * (4 * progress * (1 - progress)),
+            }),
+          });
+        }}
+        onPlay={({ paliga }) => paliga?.play()}
       >
         <TestSection.Box
           key={`timeline7-0`}
@@ -55,11 +41,6 @@ function TimelineTest7({ className }: TimelineTest7Props) {
 }
 
 /** ===== Others ===== */
-const each = [
-  { x: 50, delay: 0 },
-  { x: 100, delay: 200 },
-  { x: 150, delay: 300 },
-];
 
 /** ===== Types ===== */
 export type TimelineTest7Props = {

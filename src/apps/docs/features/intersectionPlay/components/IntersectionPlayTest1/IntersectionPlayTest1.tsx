@@ -39,6 +39,7 @@ function IntersectionPlayTest1({ className }: IntersectionPlayTest1Props) {
       <TestSection
         titleLink="intersection-play1-0"
         description="스크롤이 교차 시 지정된 애니메이션 실행"
+        hideController
         classNames={{
           container: "h-[140px] overflow-y-auto overflow-x-hidden",
         }}
@@ -51,6 +52,7 @@ function IntersectionPlayTest1({ className }: IntersectionPlayTest1Props) {
       <TestSection
         titleLink="intersection-play1-1"
         description="각각의 엘리먼트별 지정 가능"
+        hideController
         classNames={{
           container: "h-[140px] overflow-y-auto overflow-x-hidden",
         }}

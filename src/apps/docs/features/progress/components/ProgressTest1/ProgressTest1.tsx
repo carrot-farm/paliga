@@ -41,6 +41,7 @@ function ProgressTest1({ className }: ProgressTest1Props) {
         titleLink="progress1-0"
         description="진행도에 따라 애니메이션 진행"
         containerRef={containerRef1}
+        hideController
       >
         <div className="flex flex-col gap-y-2">
           <TestSection.Box ref={box1} />

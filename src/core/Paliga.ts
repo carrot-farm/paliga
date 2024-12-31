@@ -4,6 +4,7 @@ import { getSchedule, scheduleRunner } from "../helpers/scheduleHelpers";
 import { getInnerHeight } from "../helpers/styleHelpers";
 import {
   TAnimateOptions,
+  TFrameObserver,
   TIntersectionPlayOptions,
   TPlayOptions,
   TSchedule,
@@ -16,6 +17,7 @@ import { framer } from "./framer";
 import { timeoutFn } from "./timeUtils";
 
 export class Paliga {
+  #frameObservers: TFrameObserver[] = [];
   #state: "idle" | "running" | "paused" = "idle";
   #progress: number = 0;
   #totalDuration: number = 0;
@@ -31,6 +33,7 @@ export class Paliga {
 
   /** 연속 실행기 */
   play({
+    fillMode = "forwards",
     iteration,
     startProgress = 0,
     endProgress = 1,
@@ -47,6 +50,7 @@ export class Paliga {
     if (this.#state === "running") {
       return;
     }
+    this.#progress = 0;
     this.#state = "running";
 
     const runner = () => {
@@ -54,8 +58,13 @@ export class Paliga {
         startProgress,
         endProgress,
         scheduleList: this.#schedule,
-        onFrame: ({ progress }) => {
-          instance.#progress = progress;
+        onFrame: (data) => {
+          instance.#progress = data.progress;
+
+          // # 옵저버 실행
+          if (instance.#frameObservers.length > 0) {
+            instance.runFrameObserver({ ...data, state: instance.#state });
+          }
 
           if (this.#state === "paused") {
             return false;
@@ -92,7 +101,15 @@ export class Paliga {
       }
 
       this.#state = "idle";
-      instance.#progress = 0;
+
+      if (fillMode === "none") {
+        instance.#progress = 0;
+        this.progress(instance.#progress);
+      }
+
+      if (this.#frameObservers.length > 0) {
+        this.runFrameObserver({ progress: instance.#progress, state: instance.#state });
+      }
 
       // # 모든 애니메이션 종료 시 호출
       if (
@@ -176,7 +193,6 @@ export class Paliga {
     const getScrollY = (el: HTMLElement | Window) =>
       "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
     const limitRange = (num: number) => Math.max(Math.min(num, 1), 0);
-
     const newRoot = root ?? window;
     const scrollY = getScrollY(newRoot);
     const scheduleLen = this.#schedule.length;
@@ -282,6 +298,22 @@ export class Paliga {
   /** 애니메이션 중단 */
   pause() {
     this.#state = "paused";
+  }
+
+  /** 프레임 감시 */
+  observeFrame(f: TFrameObserver) {
+    this.#frameObservers.push(f);
+  }
+
+  /** 프레임 감시 실행 */
+  runFrameObserver(data: Parameters<TFrameObserver>[0]) {
+    const len = this.#frameObservers.length;
+    let i = 0;
+
+    while (i < len) {
+      this.#frameObservers[i](data);
+      i++;
+    }
   }
 
   /** 애니메이션 정의 */
@@ -409,6 +441,8 @@ export class Paliga {
       totalDuration: this.#totalDuration,
       segments: this.#segments,
     });
+
+    console.log("> ", this.#schedule);
 
     return this;
   }

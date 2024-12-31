@@ -1,8 +1,9 @@
 import { ApplyStyles } from "../core/ApplyStyles";
 import { Easing } from "../core/Easing";
 import { framer } from "../core/framer";
-import { TAnimation, TStylesState } from "../types";
+import { TAnimation, TAnimationState, TStylesState } from "../types";
 import { getProgress, getProgressValue } from "./progressHelpers";
+import { convertToRgbaNumbers } from "./styleHelpers";
 
 /**
  * startProgress, endProgress 사이의 애니메이션 정보를 반환
@@ -79,7 +80,10 @@ export const getAnimationToStyle = ({
   maxDuration: number;
   progress: number;
   animation: TAnimation;
-}): TStylesState & { animationProgress: number } => {
+}): {
+  animationProgress: number;
+  backgroundColor: Exclude<TStylesState["backgroundColor"], string>;
+} & Omit<TStylesState, "backgroundColor"> => {
   const { from, toDelay, to, easing = "linear", onFrame } = animation;
   const startProgress = (toDelay ? toDelay.progress : from.progress) ?? 0;
   const animationProgress = Math.min(getProgress(startProgress, to.progress, progress), 1);
@@ -96,19 +100,66 @@ export const getAnimationToStyle = ({
 
   let x: number | undefined = from.x;
   let y: number | undefined = from.y;
+  let z: number | undefined = from.z;
   let opacity: number | undefined = from.opacity;
+  let scale: TAnimationState["scale"] = from.scale;
+  let rotateX: TAnimationState["rotateX"] = from.rotateX;
+  let rotateY: TAnimationState["rotateY"] = from.rotateY;
+  let rotateZ: TAnimationState["rotateZ"] = from.rotateZ;
+  let backgroundColor: Exclude<TAnimationState["backgroundColor"], string> = Array.isArray(
+    from.backgroundColor,
+  )
+    ? from.backgroundColor
+    : undefined;
+  const toBackgroundColor = Array.isArray(to.backgroundColor) ? to.backgroundColor : undefined;
+  const frameBackground =
+    typeof frame?.backgroundColor === "string"
+      ? convertToRgbaNumbers(frame.backgroundColor)
+      : Array.isArray(frame?.backgroundColor)
+        ? frame.backgroundColor
+        : undefined;
 
   if (!isDelay) {
     x = frame?.x ?? getProgressValue(from.x, to.x, easingProgress);
     y = frame?.y ?? getProgressValue(from.y, to.y, easingProgress);
+    z = frame?.z ?? getProgressValue(from.z, to.z, easingProgress);
     opacity = frame?.opacity ?? getProgressValue(from.opacity, to.opacity, easingProgress);
+    rotateX = frame?.rotateX ?? getProgressValue(from.rotateX, to.rotateX, easingProgress);
+    rotateY = frame?.rotateY ?? getProgressValue(from.rotateY, to.rotateY, easingProgress);
+    rotateZ = frame?.rotateZ ?? getProgressValue(from.rotateZ, to.rotateZ, easingProgress);
+    scale =
+      frame?.scale ??
+      (from.scale || to.scale
+        ? [
+            getProgressValue(from.scale?.[0], to.scale?.[0], easingProgress) ?? 1,
+            getProgressValue(from.scale?.[1], to.scale?.[1], easingProgress) ?? 1,
+            getProgressValue(from.scale?.[2], to.scale?.[2], easingProgress) ?? 1,
+          ]
+        : undefined);
+
+    backgroundColor =
+      frameBackground ??
+      (backgroundColor || toBackgroundColor
+        ? [
+            getProgressValue(backgroundColor?.[0], toBackgroundColor?.[0], easingProgress) ?? 0,
+            getProgressValue(backgroundColor?.[1], toBackgroundColor?.[1], easingProgress) ?? 0,
+            getProgressValue(backgroundColor?.[2], toBackgroundColor?.[2], easingProgress) ?? 0,
+            getProgressValue(backgroundColor?.[3], toBackgroundColor?.[3], easingProgress) ?? 0,
+          ]
+        : undefined);
   }
 
   return {
     animationProgress,
     x,
     y,
+    z,
     opacity,
+    scale,
+    rotateX,
+    rotateY,
+    rotateZ,
+    backgroundColor,
   };
 };
 
@@ -180,12 +231,20 @@ export const animationsRunner = ({
         animation,
       });
 
+      // console.log("> ", styles);
+
       // 엘리먼트에 스타일 적용
       ApplyStyles.router({
         el: animation.element,
         x: styles.x,
         y: styles.y,
+        z: styles.z,
         opacity: styles.opacity,
+        scale: styles.scale,
+        rotateX: styles.rotateX,
+        rotateY: styles.rotateY,
+        rotateZ: styles.rotateZ,
+        backgroundColor: styles.backgroundColor,
       });
 
       if (onFrame) {

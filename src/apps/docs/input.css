@@ -19,4 +19,18 @@
       "Segoe UI Symbol",
       "Noto Color Emoji";
   }
+
+  /** scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #686868;
+    border-radius: 10px;
+    padding: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 }

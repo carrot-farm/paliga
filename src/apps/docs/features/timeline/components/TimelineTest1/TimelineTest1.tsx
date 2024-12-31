@@ -49,16 +49,20 @@ function TimelineTest1({ className }: TimelineTest1Props) {
       <TestSection
         titleLink="timeline-1-0"
         description="x축으로 200px 만큼 2000ms 동안 이동"
-        onPlay={() => paliga.play()}
+        onReady={({ paliga }) => box1.current && paliga.timeline([box1.current], { x: 200 })}
+        onPlay={({ paliga }) => paliga?.play()}
       >
         <TestSection.Box ref={box1} />
       </TestSection>
 
       <TestSection
         titleLink="timeline-1-1"
-        description="x축으로 200px 만큼 이동 후 y축으로 100px 이동"
+        description="x축으로 200px 만큼 이동 후 y축으로 50px 이동"
         className="mt-4"
-        onPlay={() => paliga2.play()}
+        onReady={({ paliga }) =>
+          box2.current && paliga.timeline([box2.current], { x: 200 }).timeline({ y: 50 })
+        }
+        onPlay={({ paliga }) => paliga?.play()}
       >
         <TestSection.Box ref={box2} />
       </TestSection>
@@ -67,7 +71,13 @@ function TimelineTest1({ className }: TimelineTest1Props) {
         titleLink="timeline-1-2"
         description="여러개의 엘리먼트 이동"
         className="mt-4"
-        onPlay={() => paliga3.play()}
+        onReady={({ paliga }) =>
+          box3_0.current &&
+          box3_1.current &&
+          box3_2.current &&
+          paliga.timeline([box3_0.current, box3_1.current, box3_2.current], { x: 200 })
+        }
+        onPlay={({ paliga }) => paliga?.play()}
       >
         <TestSection.Box ref={box3_0} />
         <TestSection.Box className="mt-2" ref={box3_1} />

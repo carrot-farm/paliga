@@ -68,6 +68,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
         title="threshold: `number`"
         titleLink="intersection-play2-0"
         description="엘리먼트가 얼마나 노출되어야 하는지 실행이 되는지 지정.(0 ~ 1) 기본값은 0"
+        hideController
         classNames={{
           container: "h-[140px] overflow-y-auto overflow-x-hidden",
         }}
@@ -81,6 +82,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
         title="eachOptions"
         titleLink="intersection-play2-1"
         description="엘리먼트 별로 애니메이션을 지정"
+        hideController
         classNames={{
           container: "h-[140px] overflow-y-auto overflow-x-hidden",
         }}
@@ -100,6 +102,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
         title="onIntersecting"
         titleLink="intersection-play2-2"
         description="교차 시 호출"
+        hideController
         classNames={{
           container: "h-[140px] overflow-y-auto overflow-x-hidden",
         }}
@@ -113,6 +116,7 @@ function IntersectionPlayTest2({ className }: IntersectionPlayTest2Props) {
         title="onAnimationEnd"
         titleLink="intersection-play2-3"
         description="애니메이션 종료 시 호출"
+        hideController
         classNames={{
           container: "h-[140px] overflow-y-auto overflow-x-hidden",
         }}

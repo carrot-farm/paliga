@@ -112,6 +112,7 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
         scrollStart={undefined}
         scrollEnd={undefined}
         scrollTargetEl={box1.current}
+        hideController
         classNames={{
           container: "h-[240px] overflow-y-auto overflow-x-hidden",
         }}
@@ -130,6 +131,7 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
         scrollStart={0}
         scrollEnd={undefined}
         scrollTargetEl={box2.current}
+        hideController
         classNames={{
           container: "h-[240px] overflow-y-auto overflow-x-hidden",
         }}
@@ -148,6 +150,7 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
         scrollStart={0}
         scrollEnd={100}
         scrollTargetEl={box3.current}
+        hideController
         classNames={{
           container: "h-[240px] overflow-y-auto overflow-x-hidden",
         }}
@@ -166,6 +169,7 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
         scrollStart={0}
         scrollEnd={100}
         scrollTargetEl={box5.current}
+        hideController
         classNames={{
           container: "h-[240px] overflow-y-auto overflow-x-hidden",
         }}

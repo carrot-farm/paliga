@@ -1,5 +1,6 @@
-import { TAnimation, TAnimationState, TSchedule, TSegment } from "../types";
+import { TAnimation, TAnimationState, TSchedule, TSegment, TTransition } from "../types";
 import { animationsRunner } from "./animationHelpers";
+import { convertToRgbaNumbers, getElementStyleToNumber } from "./styleHelpers";
 
 /** 스케쥴을 실행 */
 type TScheduleRunnerParams = {
@@ -99,24 +100,13 @@ export const getSchedule = ({
       // const sumDuration = transition.duration + curDelay;
 
       // # 시작점
-      const fromDuration = prevAnimation ? prevAnimation.to.duration : 0;
-      const from: TAnimationState = {
-        duration: fromDuration,
-        progress: prevAnimation ? prevAnimation.to.progress : 0,
-        x: prevAnimation?.to.x ?? (transition.x !== undefined ? 0 : undefined),
-        y: prevAnimation?.to.y ?? (transition.y !== undefined ? 0 : undefined),
-        opacity:
-          prevAnimation?.to.opacity ??
-          (transition.opacity !== undefined
-            ? Number(transition.element.style.opacity ?? 1)
-            : undefined),
-      };
+      const from = getFromAnimationState({ prevAnimation, transition });
 
       // # 딜레이
       const toDelay: TAnimation["toDelay"] = transition.delay
         ? {
-            duration: fromDuration + curDelay,
-            progress: (fromDuration + curDelay) / totalDuration,
+            duration: from.duration + curDelay,
+            progress: (from.duration + curDelay) / totalDuration,
           }
         : undefined;
 
@@ -125,41 +115,23 @@ export const getSchedule = ({
         ? toDelay.duration + transition.duration
         : from.duration + transition.duration;
       const toProgress = j === tLen - 1 ? 1 : toDuration / totalDuration;
-
-      const to: TAnimationState = {
+      const to = getToAnimationState({
         duration: toDuration,
         progress: toProgress,
-        x: transition.x
-          ? transition.direction === "reverse"
-            ? -transition.x + (from.x ?? 0)
-            : transition.x + (from.x ?? 0)
-          : transition.x,
-        y: transition.y
-          ? transition.direction === "reverse"
-            ? -transition.y + (from.y ?? 0)
-            : transition.y + (from.y ?? 0)
-          : transition.y,
-        opacity: transition.opacity,
-      };
+        from,
+        transition,
+      });
 
-      const newTo: TAnimationState = {
-        duration: to.duration,
-        progress: to.progress,
-        x: to.x === undefined && from.x !== undefined ? from.x : to.x,
-        y: to.y === undefined && from.y !== undefined ? from.y : to.y,
-        opacity: to.opacity === undefined && from.opacity !== undefined ? from.opacity : to.opacity,
-      };
+      // console.log("> ", from, to);
 
       // 스케쥴
       const newAnimation: TAnimation = {
-        // sumDuration,
         from,
         toDelay,
-        to: newTo,
+        to,
         element: transition.element,
         direction: transition.direction,
         duration: transition.duration,
-        // fillMode: transition.fillMode,
         delay: transition.delay,
         easing: transition.easing,
         onFrame: transition.onFrame,
@@ -178,4 +150,108 @@ export const getSchedule = ({
   }
 
   return schedule;
+};
+
+/** `fromAnimateion`구성 */
+export const getFromAnimationState = ({
+  prevAnimation,
+  transition,
+}: {
+  // element
+  prevAnimation?: TAnimation;
+  transition: TTransition;
+}): TAnimationState => {
+  const { element } = transition;
+  const {
+    duration = 0,
+    progress = 0,
+    x = transition.x !== undefined ? 0 : undefined,
+    y = transition.y !== undefined ? 0 : undefined,
+    z = transition.z !== undefined ? 0 : undefined,
+    rotateX = transition.rotateX !== undefined ? 0 : undefined,
+    rotateY = transition.rotateY !== undefined ? 0 : undefined,
+    rotateZ = transition.rotateZ !== undefined || transition.rotate !== undefined ? 0 : undefined,
+    opacity = transition.opacity !== undefined
+      ? getElementStyleToNumber(element, "opacity")
+      : undefined,
+    scale = transition.scale ? [1, 1, 1] : undefined,
+    backgroundColor = transition.backgroundColor !== undefined
+      ? convertToRgbaNumbers(
+          element.computedStyleMap().get("background-color")?.toString() ?? "rgba(0,0,0,0)",
+        )
+      : undefined,
+  }: TAnimationState = prevAnimation?.to ?? {
+    duration: 0,
+    progress: 0,
+  };
+
+  // console.log("> ee: ");
+
+  return {
+    duration,
+    progress,
+    x,
+    y,
+    z,
+    opacity,
+    scale,
+    rotateX,
+    rotateY,
+    rotateZ,
+    backgroundColor,
+  };
+};
+
+/** `toAnimationState` 구성 */
+export const getToAnimationState = ({
+  duration,
+  progress,
+  from,
+  transition,
+}: {
+  duration: number;
+  progress: number;
+  from: TAnimationState;
+  transition: TTransition;
+}) => {
+  const { direction, backgroundColor, opacity, scale, x, y, z, rotate, rotateX, rotateY, rotateZ } =
+    transition;
+  const to: TAnimationState = {
+    duration,
+    progress,
+    x: getDirectionValue(x, from.x, direction === "reverse"),
+    y: getDirectionValue(y, from.y, direction === "reverse"),
+    z: getDirectionValue(z, from.z, direction === "reverse"),
+    rotateX: getDirectionValue(rotateX, from.rotateX, direction === "reverse"),
+    rotateY: getDirectionValue(rotateY, from.rotateY, direction === "reverse"),
+    rotateZ: getDirectionValue(rotateZ ?? rotate, from.rotateZ, direction === "reverse"),
+    opacity: typeof opacity === "number" ? opacity : from.opacity,
+    backgroundColor:
+      typeof backgroundColor === "string"
+        ? convertToRgbaNumbers(backgroundColor)
+        : from.backgroundColor,
+    scale: Array.isArray(scale)
+      ? [
+          scale[0] ?? from.scale?.[0] ?? 1,
+          scale[1] ?? from.scale?.[1] ?? 1,
+          scale[2] ?? from.scale?.[2] ?? 1,
+        ]
+      : from.scale,
+  };
+
+  return to;
+};
+
+/** 방향에 따른 값을 반환 */
+const getDirectionValue = (
+  value?: number,
+  fromValue: number | undefined = undefined,
+  isReverse: boolean = false,
+) => {
+  if (value === undefined) {
+    return fromValue;
+  }
+  const newFromValue = fromValue ?? 0;
+
+  return isReverse ? -value + newFromValue : value + newFromValue;
 };

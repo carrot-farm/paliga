@@ -8,27 +8,27 @@ export const useChildren = ({ children }: { children: ReactNode }) => {
         return null;
       }
       return child;
-    })
-      ?.filter((a) => {
-        const newType = a.type as ReactElementType;
-        if (!newType.name && !newType.render?.name && !newType.displayName) {
-          return false;
-        }
-        return true;
-      })
-      .reduce<Record<string, ReactNode>>((acc, cur) => {
-        const newType = cur.type as ReactElementType;
-        const name =
-          newType?.prototype?.displayName ??
-          newType.displayName ??
-          newType?.name ??
-          (newType.render!.name as string);
-
+    })?.reduce<Record<string, ReactNode>>((acc, cur) => {
+      if (typeof cur.type === "string") {
         return {
           ...acc,
-          [name]: React.cloneElement(cur),
+          others: acc.others ? [...(acc.others as any), cur] : [cur],
         };
-      }, {}) ?? {};
+      }
+
+      const newType = cur.type as ReactElementType;
+      const name =
+        newType?.prototype?.displayName ??
+        newType.displayName ??
+        newType?.name ??
+        (newType.render!.name as string);
+
+      return {
+        ...acc,
+        // [name]: React.cloneElement(cur),
+        [name]: cur,
+      };
+    }, {}) ?? {};
 
   return components;
 };

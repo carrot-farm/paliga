@@ -9,6 +9,8 @@ export type TPlayOptions = {
   startProgress?: number;
   /** 지정된 진행도까지만 실행 */
   endProgress?: number;
+  /** 애니메이션 종료 후 위치(default: "forwards") */
+  fillMode?: "none" | "forwards";
   /** 애니메이션 종료 시 콜백 */
   onAnimationEnd?: (data: TScheduleRunnerOnParams) => void;
   /** 모든 애니메이션 종료 시 콜백 */
@@ -59,6 +61,11 @@ export type TScrollProgressOptions = {
 export type TEachState = Pick<TTransition, "direction" | "easing" | "x" | "y" | "delay">;
 
 /** ===== 상태 ===== */
+export type TFrameObserver = (
+  data: { state: "idle" | "running" | "paused"; progress: number } & Partial<
+    Omit<TScheduleRunnerOnParams, "progress">
+  >,
+) => void;
 
 /** 하나의 엘리먼트에 적용될 애니메이션 정보 */
 export type TTransition = {
@@ -66,11 +73,9 @@ export type TTransition = {
   // animateIndex: number;
   /** 진행방향 */
   direction: TDirection;
-  /** 애니메이션 적용 형태 */
-  // fillMode?: "none" | "forwards";
+
   /** easing */
   easing?: TEasing;
-  /** 적용한 animate의 인덱스 */
   /** 반복 횟수 */
   iteration: number;
   /** 애니메이션 시간(ms) */
@@ -164,7 +169,19 @@ export type TEasing =
 export type TStylesState = {
   x?: number;
   y?: number;
+  z?: number;
   opacity?: number;
+  scale?: TStylesStateScale;
+  rotate?: number;
+  rotateX?: number;
+  rotateY?: number;
+  rotateZ?: number;
+  backgroundColor?: string | [number, number, number, number];
 };
 
-export type TApplyStylesParams = { el: HTMLElement } & TStylesState;
+type TStylesStateScale = [number] | [number, number] | [number, number, number];
+
+export type TApplyStylesParams = {
+  backgroundColor?: [number, number, number, number];
+  el: HTMLElement;
+} & Omit<TStylesState, "backgroundColor">;

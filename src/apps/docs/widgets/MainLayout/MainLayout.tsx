@@ -20,9 +20,11 @@ function MainLayout({}: MainLayoutProps) {
         )}
       >
         <div className="grid grid-cols-12">
-          {/* menu */}
-          <div className="relative mt-8 hidden overflow-visible pr-4 lg:col-span-2 lg:block">
-            <Menu data={MENU_ITEMS} />
+          {/* left menu */}
+          <div className="hidden pr-4 lg:col-span-2 lg:block">
+            <div className="fixed max-h-[calc(100vh-64px)] overflow-y-auto">
+              <Menu data={MENU_ITEMS} />
+            </div>
           </div>
 
           <div className="col-span-12 mt-10 lg:col-span-10 lg:px-16 xl:col-span-8">

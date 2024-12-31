@@ -1,32 +1,11 @@
 "use client";
 import { cn } from "@nextui-org/react";
-import { useEffect, useRef } from "react";
-import { usePaliga } from "../../../../shared/hooks/usePaliga";
+import { useRef } from "react";
 import { TestSection } from "../../../test/components/TestSection";
 
 /** ===== Components ===== */
 function TimelineTest6({ className }: TimelineTest6Props) {
   const box1 = useRef<HTMLDivElement[]>([]);
-  const box2 = useRef<HTMLDivElement[]>([]);
-  const { paliga } = usePaliga();
-  const { paliga: paliga2 } = usePaliga();
-
-  useEffect(() => {
-    if (box1.current.length > 0) {
-      paliga.timeline(box1.current, {
-        x: 200,
-        duration: 1000,
-        each: (_, i) => each[i],
-      });
-    }
-
-    if (box2.current) {
-      paliga2.timeline(box2.current, {
-        x: 200,
-        duration: 1000,
-      });
-    }
-  }, []);
 
   return (
     <div className={cn(className)}>
@@ -34,8 +13,15 @@ function TimelineTest6({ className }: TimelineTest6Props) {
         title="each()"
         titleLink="timeline5-0"
         description="각 엘리먼트별 애니메이션 지정"
-        onPlay={() => {
-          paliga.play();
+        onReady={({ paliga }) => {
+          paliga.timeline(box1.current, {
+            x: 200,
+            duration: 1000,
+            each: (_, i) => each[i],
+          });
+        }}
+        onPlay={({ paliga }) => {
+          paliga?.play();
         }}
       >
         {each.map((a, i) => (
