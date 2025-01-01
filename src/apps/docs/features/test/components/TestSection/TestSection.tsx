@@ -1,6 +1,15 @@
 "use client";
 import { cn, Link } from "@nextui-org/react";
-import { forwardRef, ReactNode, Ref, RefObject, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  MutableRefObject,
+  ReactNode,
+  Ref,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Paliga } from "../../../../../../core/Paliga";
 import TestSectionController from "./TestSectionController";
 
@@ -11,12 +20,14 @@ function TestSection({
   titleLink,
   description,
   className,
+  defaultProgress,
   scrollTrigger,
   scrollStart,
   scrollEnd,
   hideController,
+  disableInitialized,
   classNames,
-  paliga,
+  paligaRef: outerPaligaRef,
   children,
   containerRef,
   scrollTargetEl,
@@ -25,7 +36,7 @@ function TestSection({
   onReady,
 }: TestSectionProps) {
   const innerContainerRef = useRef<HTMLDivElement>(null);
-  const paligaRef = useRef<Paliga | null>(null);
+  const paligaRef = useRef<Paliga>(outerPaligaRef?.current ?? new Paliga());
   const [isReady, setIsReady] = useState(false);
   const [newScrollStart, setNewScrollStart] = useState<number>();
   const [newScrollEnd, setNewScrollEnd] = useState<number>();
@@ -33,12 +44,9 @@ function TestSection({
 
   // # onReady
   useEffect(() => {
-    if (!paligaRef.current) {
-      paligaRef.current = paliga ?? new Paliga();
-      // paligaRef.current = paliga;
+    if (!disableInitialized) {
+      paligaRef.current.allInitialize();
     }
-
-    paligaRef.current.initialize();
     setIsReady(true);
 
     if (!onReady) {
@@ -46,7 +54,7 @@ function TestSection({
     }
 
     onReady({ paliga: paligaRef.current });
-  }, []);
+  }, [disableInitialized]);
 
   // # 스크롤 트리거
   useEffect(() => {
@@ -125,14 +133,17 @@ function TestSection({
           />
           <div className="min-h-[120px]">{children}</div>
 
-          {!hideController && isReady && paligaRef.current && (
-            <TestSectionController
-              className="mt-2"
-              paliga={paligaRef.current}
-              onPlay={({ paliga }) => onPlay && onPlay({ paliga })}
-              onPause={({ paliga }) => onPause && onPause({ paliga })}
-            />
-          )}
+          <div className="h-8">
+            {!hideController && isReady && paligaRef.current && (
+              <TestSectionController
+                className="mt-2"
+                paliga={paligaRef.current}
+                defaultProgress={defaultProgress}
+                onPlay={({ paliga }) => onPlay && onPlay({ paliga })}
+                onPause={({ paliga }) => onPause && onPause({ paliga })}
+              />
+            )}
+          </div>
         </div>
       </div>
     </section>
@@ -213,6 +224,8 @@ export type TestSectionProps = {
   description?: string;
   /** 클래스 */
   className?: string;
+  /** 기본 progress */
+  defaultProgress?: number;
   /** scroll progress 의 trigger 표시(%) */
   scrollTrigger?: string;
   /** scroll progress 의 trigger 표시 */
@@ -221,6 +234,8 @@ export type TestSectionProps = {
   scrollEnd?: number;
   /** true 일 경우 컨트롤러 감추기 */
   hideController?: boolean;
+  /** disabled initialize */
+  disableInitialized?: boolean;
   /** scroll progress 의 대상이 될 첫번째 엘리먼트의 Y */
   scrollTargetEl?: HTMLDivElement | null;
   /** 하위 요소의 클래스 */
@@ -229,7 +244,7 @@ export type TestSectionProps = {
     container?: string;
   };
   /** paliga 인스턴스 */
-  paliga?: Paliga;
+  paligaRef?: MutableRefObject<Paliga>;
   /** children */
   children?: ReactNode;
   /** container의 ref */

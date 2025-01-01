@@ -5,9 +5,15 @@ import { IoPause, IoPlay } from "react-icons/io5";
 import { Paliga } from "../../../../../../core/Paliga";
 
 /** ===== Components ===== */
-function TestSectionController({ className, paliga, onPlay, onPause }: TestSectionControllerProps) {
+function TestSectionController({
+  className,
+  defaultProgress = 0,
+  paliga,
+  onPlay,
+  onPause,
+}: TestSectionControllerProps) {
   const [state, setState] = useState<"idle" | "running" | "paused">("idle");
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(defaultProgress);
   const [isReady, setIsReady] = useState(false);
 
   const hanelClick = () => {
@@ -68,6 +74,8 @@ TestSectionController.prototype.displayName = "Controller";
 export type TestSectionControllerProps = {
   /** class */
   className?: string;
+  /** progress */
+  defaultProgress?: number;
   /** paliga */
   paliga: Paliga;
   /** play click */

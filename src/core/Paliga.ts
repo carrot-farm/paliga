@@ -21,15 +21,15 @@ export class Paliga {
   #state: "idle" | "running" | "paused" = "idle";
   #progress: number = 0;
   #totalDuration: number = 0;
+  #resumeProgress: number | undefined;
+  #playOptions: TPlayOptions = {};
   #animates: ({ elements: HTMLElement[] } & TAnimateOptions)[] = [];
   #segments: TSegment[] = [];
   #schedule: TSchedule[] = [];
-  #scrollLisners: (() => void)[] = [];
+  #scrollLisners: { root: HTMLElement | Window; listener: () => void }[] = [];
   #intersectionObservers: IntersectionObserver[] = [];
 
-  constructor() {
-    this.initialize();
-  }
+  constructor() {}
 
   /** 연속 실행기 */
   play({
@@ -43,19 +43,24 @@ export class Paliga {
     let newIteration = iteration;
     let instance = this;
 
-    if (startProgress !== undefined) {
-      this.#progress = startProgress;
-    }
-
-    if (this.#state === "running") {
+    if (instance.#state === "running") {
       return;
     }
-    this.#progress = 0;
-    this.#state = "running";
+
+    instance.#progress = instance.#resumeProgress ?? startProgress;
+    instance.#state = "running";
+    instance.#playOptions = {
+      fillMode,
+      iteration,
+      startProgress,
+      endProgress,
+      onAnimationEnd,
+      onAllAnimationEnd,
+    };
 
     const runner = () => {
       scheduleRunner({
-        startProgress,
+        startProgress: instance.#resumeProgress ?? startProgress,
         endProgress,
         scheduleList: this.#schedule,
         onFrame: (data) => {
@@ -84,6 +89,8 @@ export class Paliga {
           allAnimationEnd();
         },
       });
+
+      instance.#resumeProgress = undefined;
     };
 
     /** 모든 애니메이션 종료 시 콜백 */
@@ -132,11 +139,6 @@ export class Paliga {
     ...options
   }: TIntersectionPlayOptions = {}) {
     this.#eachSchedule((schedule, i) => {
-      this.#intersectionObservers.forEach((observer) => {
-        observer.unobserve(schedule.element);
-      });
-      this.#intersectionObservers = [];
-
       const { element } = schedule;
       const newOption = typeof eachOptions === "function" ? eachOptions(schedule, i) : options;
       const newObserver = new IntersectionObserver((entries, observer) => {
@@ -190,6 +192,10 @@ export class Paliga {
     duration = 300,
     root,
   }: TScrollProgressOptions = {}) {
+    if (this.#schedule.length === 0) {
+      return;
+    }
+
     const getScrollY = (el: HTMLElement | Window) =>
       "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
     const limitRange = (num: number) => Math.max(Math.min(num, 1), 0);
@@ -291,13 +297,32 @@ export class Paliga {
     };
 
     handleScroll();
-    this.#scrollLisners.push(handleScroll);
     newRoot.addEventListener("scroll", handleScroll);
+    this.#scrollLisners.push({ root: newRoot, listener: handleScroll });
   }
 
   /** 애니메이션 중단 */
   pause() {
     this.#state = "paused";
+  }
+
+  /** 중단된 애니메이션 재개 */
+  resume() {
+    if (this.#state !== "paused") {
+      return;
+    }
+    this.#resumeProgress = this.#progress;
+    this.play(this.#playOptions);
+  }
+
+  /** 애니메이션의 진행 방향을 변경 */
+  reverse() {
+    this.#resumeProgress = this.#progress;
+    this.play({
+      ...this.#playOptions,
+      startProgress: this.#playOptions.endProgress,
+      endProgress: this.#playOptions.startProgress,
+    });
   }
 
   /** 프레임 감시 */
@@ -442,33 +467,50 @@ export class Paliga {
       segments: this.#segments,
     });
 
-    console.log("> ", this.#schedule);
+    // console.log("> ", this.#schedule);
 
     return this;
   }
 
   /** 초기화 */
   initialize() {
-    // # intersection observer 이벤트 해제
+    this.#totalDuration = 0;
+    this.#animates = [];
+    this.#segments = [];
+    this.#schedule = [];
+    return this;
+  }
+
+  /** 초기화 */
+  allInitialize() {
+    this.initializeObservers();
+    this.initializeScrollListeners();
+
+    this.#totalDuration = 0;
+    this.#animates = [];
+    this.#segments = [];
+    this.#schedule = [];
+    return this;
+  }
+
+  /** 인터섹션 옵저버 초기화 */
+  initializeObservers() {
     this.#schedule.forEach((schedule) => {
       this.#intersectionObservers.forEach((observer) => {
         observer.unobserve(schedule.element);
       });
     });
 
-    // # 스크롤 이벤트 이벤트 해제
-    this.#scrollLisners.forEach((listener) => {
-      window.removeEventListener("scroll", listener);
+    this.#intersectionObservers = [];
+  }
+
+  /** 스크롤 리스너 초기화 */
+  initializeScrollListeners() {
+    this.#scrollLisners.forEach(({ root, listener }) => {
+      root.removeEventListener("scroll", listener);
     });
 
-    this.#totalDuration = 0;
-    this.#animates = [];
-    this.#segments = [];
-    this.#schedule = [];
     this.#scrollLisners = [];
-    this.#intersectionObservers = [];
-
-    return this;
   }
 
   /** 스케쥴 엘리먼트 순회 */

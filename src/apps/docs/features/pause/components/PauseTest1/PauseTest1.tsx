@@ -6,9 +6,10 @@ import { TestSection } from "../../../test/components/TestSection";
 /** ===== Components ===== */
 function PauseTest1({ className }: PauseTest1Props) {
   const box1 = useRef<HTMLDivElement>(null);
+  const box2 = useRef<HTMLDivElement>(null);
 
   return (
-    <div className={cn(className)}>
+    <div className={cn("flex flex-col gap-y-4", className)}>
       <TestSection
         title="Pause()"
         titleLink="play2-0"
@@ -23,6 +24,26 @@ function PauseTest1({ className }: PauseTest1Props) {
         onPlay={({ paliga }) => paliga?.play({ iteration: Infinity })}
       >
         <TestSection.Box key={`play2-0`} ref={box1} />
+      </TestSection>
+
+      <TestSection
+        title="Resume()"
+        titleLink="play2-1"
+        description="중단 시킨 애니메이션을 재개"
+        onReady={({ paliga }) =>
+          box2.current &&
+          paliga
+            .timeline([box2.current], {
+              x: 200,
+              direction: "alternate",
+            })
+            .play({ iteration: Infinity })
+        }
+        onPlay={({ paliga }) => {
+          paliga?.resume();
+        }}
+      >
+        <TestSection.Box key={`play2-0`} ref={box2} />
       </TestSection>
     </div>
   );
