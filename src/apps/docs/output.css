@@ -1020,6 +1020,14 @@ video {
   margin-top: 2rem;
 }
 
+.mt-\[150px\] {
+  margin-top: 150px;
+}
+
+.mt-\[80px\] {
+  margin-top: 80px;
+}
+
 .box-border {
   box-sizing: border-box;
 }

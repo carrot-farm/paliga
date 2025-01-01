@@ -1,5 +1,6 @@
 "use client";
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import { TimelineGroupProps } from "../../features/react/components/TimelineGroupProps";
 
 /** ===== Components ===== */
 function ReactTimelineGroupPage({}: ReactTimelineGroupPageProps) {
@@ -10,7 +11,7 @@ function ReactTimelineGroupPage({}: ReactTimelineGroupPageProps) {
       // defaultExpandedKeys={["1"]}
     >
       <AccordionItem title="Props" key="0">
-        test
+        <TimelineGroupProps />
       </AccordionItem>
     </Accordion>
   );

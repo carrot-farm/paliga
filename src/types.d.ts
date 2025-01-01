@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+import { Paliga } from "./core/Paliga";
 import { TScheduleRunnerOnParams } from "./helpers/scheduleHelpers";
 
 /** ==== 메소드 옵션 ==== */
@@ -185,3 +186,12 @@ export type TApplyStylesParams = {
   backgroundColor?: [number, number, number, number];
   el: HTMLElement;
 } & Omit<TStylesState, "backgroundColor">;
+
+/** ===== ReactComponent ===== */
+type HTMLTag = keyof HTMLElementTagNameMap;
+
+export type TimelineHTMLRef<T extends HTMLTag | undefined = undefined> = (T extends HTMLTag
+  ? HTMLElementTagNameMap[T]
+  : HTMLElement) & {
+  paliga: Paliga;
+};

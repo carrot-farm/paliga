@@ -8,7 +8,6 @@ function ReactTimelinePage({}: ReactTimelinePageProps) {
     <Accordion
       selectionMode="multiple"
       defaultExpandedKeys={Array.from({ length: 3 }, (_, i) => String(i))}
-      // defaultExpandedKeys={["1"]}
     >
       <AccordionItem title="Props" key="0">
         <TimelineProps />

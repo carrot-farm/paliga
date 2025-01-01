@@ -34,7 +34,7 @@ export function BaseRoutes() {
           </Route>
           <Route path="/react">
             <Route path="timeline" element={<ReactTimelinePage />} />
-            <Route path="timelin-group" element={<ReactTimelineGroupPage />} />
+            <Route path="timeline-group" element={<ReactTimelineGroupPage />} />
             <Route path="dev" element={<ReactDevPage />} />
             <Route path="use-paliga" element={<ReactUsePaligaPage />} />
           </Route>

@@ -1,13 +1,13 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
-import { Timeline, TimelineRef } from "../../../../../../react";
+import { Timeline } from "../../../../../../react";
 import { usePaliga } from "../../../../../../react/hooks/usePaliga";
+import { TimelineHTMLRef } from "../../../../../../types";
 import { TestSection } from "../../../test/components/TestSection";
 
 /** ===== Components ===== */
 function TimelineProps({}: TimelinePropsProps) {
-  const box1Ref = useRef<TimelineRef<"div">>(null);
+  const box1Ref = useRef<TimelineHTMLRef<"div">>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { paliga } = usePaliga();
   const { paliga: paliga2 } = usePaliga();

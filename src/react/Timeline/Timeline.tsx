@@ -13,6 +13,7 @@ import React, {
 import { Paliga as ClassPaliga } from "../../core/Paliga";
 import {
   TAnimateOptions,
+  TimelineHTMLRef,
   TIntersectionPlayOptions,
   TPlayOptions,
   TScrollProgressOptions,
@@ -34,10 +35,10 @@ function Timeline<TTag extends HTMLTag = "div">(
     paligaRef,
     ...args
   }: TimelineProps<TTag>,
-  ref: Ref<TimelineRef | undefined>,
+  ref: Ref<TimelineHTMLRef | undefined>,
 ) {
   const paliga = useRef<ClassPaliga>(paligaRef?.current ?? new ClassPaliga());
-  const innerRef = useRef<TimelineRef>();
+  const innerRef = useRef<TimelineHTMLRef>();
   const element = React.createElement(as, { ...args, ref: innerRef });
   const [isPlayReady, setIsPlayReady] = useState(false);
   const [isIntersectionPlayReady, setIsIntersectionPlayReady] = useState(false);
@@ -62,8 +63,10 @@ function Timeline<TTag extends HTMLTag = "div">(
     }
 
     paliga.current.initialize();
-    timeline.forEach((t) => {
-      paliga.current.timeline([Element], t);
+    const [first, ...others] = timeline;
+    paliga.current.timeline([Element], first);
+    others.forEach((t) => {
+      paliga.current.timeline(t);
     });
 
     if (isAutoPlay && !isPlayReady) {
@@ -147,18 +150,12 @@ export type TimelineProps<TTag extends HTMLTag> = {
   paligaRef?: MutableRefObject<ClassPaliga>;
 } & ComponentPropsWithoutRef<TTag>;
 
-export type TimelineRef<T extends HTMLTag | undefined = undefined> = (T extends HTMLTag
-  ? HTMLElementTagNameMap[T]
-  : HTMLElement) & {
-  paliga: ClassPaliga;
-};
-
 type HTMLTag = keyof HTMLElementTagNameMap;
 
 export default forwardRef(Timeline);
 
 // const Wrapper = forwardRef(Timeline) as React.ForwardRefExoticComponent<
-//   TimelineProps<keyof HTMLElementTagNameMap> & React.RefAttributes<TimelineRef | undefined>
+//   TimelineProps<keyof HTMLElementTagNameMap> & React.RefAttributes<TimelineHTMLRef | undefined>
 // > & { Item: typeof Item };
 
 // Wrapper.Item = Item;
