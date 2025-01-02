@@ -593,6 +593,13 @@ video {
   background-color: transparent;
 }
 
+/** prism */
+
+code[class*="language-tsx"] {
+  font-size: 0.8rem !important;
+  line-height: 1.2 !important;
+}
+
 .container {
   width: 100%;
 }
@@ -1018,10 +1025,6 @@ video {
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mt-\[150px\] {
-  margin-top: 150px;
 }
 
 .mt-\[80px\] {

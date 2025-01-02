@@ -1,6 +1,7 @@
 import swc from "@rollup/plugin-swc";
 import { resolve } from "path";
 import { defineConfig } from "vite";
+import prism from "vite-plugin-prismjs";
 import { defaultConfig } from "./vite-default.config";
 
 // https://vitejs.dev/config/
@@ -25,5 +26,14 @@ export default defineConfig(({ mode }) => ({
         ],
       },
     },
+    plugins: [
+      ...(defaultConfig.plugins ?? []),
+      prism({
+        languages: ["javascript", "typescript", "tsx", "html", "css"],
+        plugins: ["line-numbers"],
+        theme: "tomorrow",
+        css: true,
+      }),
+    ],
   }),
 }));

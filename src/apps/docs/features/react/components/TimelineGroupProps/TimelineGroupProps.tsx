@@ -5,16 +5,15 @@ import { TimelineGroup } from "../../../../../../react";
 import { usePaliga } from "../../../../../../react/hooks/usePaliga";
 import { TimelineHTMLRef } from "../../../../../../types";
 import { TestSection } from "../../../test/components/TestSection";
+import { REACT_CODES } from "../../constants/codes";
 
 /** ===== Components ===== */
 function TimelineGroupProps({}: TimelineGroupPropsProps) {
   const box1Ref = useRef<TimelineHTMLRef<"div">>(null);
-  const box2Ref = useRef<TimelineHTMLRef<"div">>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { paliga } = usePaliga();
   const { paliga: paliga2 } = usePaliga();
   const [isReady, setIsReady] = useState(false);
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     setIsReady(true);
@@ -26,6 +25,7 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         title="timeline"
         titleLink="react-timeline-props-0"
         description="애니메이션 타임라인 정의"
+        code={REACT_CODES["timelineProps"]}
         disableInitialized
         paligaRef={paliga}
         onPlay={() => paliga.current.play()}
@@ -49,6 +49,7 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         title="progress"
         titleLink="react-props-progress-0"
         description="지정된 진행도까지 애니메이션 실행"
+        code={REACT_CODES["progress"]}
         defaultProgress={0.3}
         disableInitialized
         paligaRef={paliga2}
@@ -77,6 +78,7 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         title="isAutoPlay"
         titleLink="react-timeline-props-1"
         description="`true`일 경우 즉시 실행"
+        code={REACT_CODES["isAutoPlay"]}
         hideController
       >
         <TimelineGroup isAutoPlay timeline={[{ x: 200 }]}>
@@ -98,6 +100,7 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         title="autoPlayOptions"
         titleLink="react-timeline-props-1"
         description="즉시 실행 시 옵션"
+        code={REACT_CODES["autoPlayOptions"]}
         hideController
       >
         <TimelineGroup isAutoPlay autoPlayOptions={{ iteration: 2 }} timeline={[{ x: 200 }]}>
@@ -119,8 +122,9 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         title="intersectionPlay"
         titleLink="react-props-intersectionPlay-0"
         description="스크롤이 지정된 위치에 도달 시 플레이"
-        hideController
+        code={REACT_CODES["intersectionPlay"]}
         classNames={{ container: "max-h-[320px] overflow-y-auto" }}
+        hideController
       >
         <div className="h-[380px]"> </div>
         <TimelineGroup
@@ -128,7 +132,7 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
           intersectionPlayOptions={{ threshold: 1 }}
           timeline={[{ x: 200 }]}
         >
-          <div className="box-1 flex flex-col gap-y-2">
+          <div className="box-1 test flex flex-col gap-y-2">
             <TimelineGroup.Item className="inline-flex items-center gap-x-1">
               <div className="h-5 w-5 rounded-md bg-warning"></div>
               <span className="text-[0.65rem]"></span>
@@ -148,11 +152,12 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         title="scrollProgress"
         titleLink="react-props-scrollProgress-0"
         description="스크롤의 위치에 따라 애니메이션의 진행 변화"
+        code={REACT_CODES["scrollProgress"]}
+        classNames={{ container: "max-h-[320px] overflow-y-auto" }}
         scrollTrigger={"20%"}
         scrollStart={-100}
         scrollEnd={80}
         hideController
-        classNames={{ container: "max-h-[320px] overflow-y-auto" }}
         scrollTargetEl={box1Ref.current}
         containerRef={containerRef}
       >
@@ -185,8 +190,6 @@ function TimelineGroupProps({}: TimelineGroupPropsProps) {
         </TimelineGroup>
         <div className="h-[250px]"> </div>
       </TestSection>
-
-      <button onClick={() => setCount(count + 1)}> {count}</button>
     </div>
   );
 }

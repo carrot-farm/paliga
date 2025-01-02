@@ -18,6 +18,7 @@ import {
   TPlayOptions,
   TScrollProgressOptions,
 } from "../../types";
+import { DevTool } from "../DevTool";
 
 /** ===== Components ===== */
 /** 타임라인 기본 컴포넌트 */
@@ -28,6 +29,7 @@ function Timeline<TTag extends HTMLTag = "div">(
     isAutoPlay,
     isIntersectionPlay,
     isScrollProgress,
+    isDevTool,
     autoPlayOptions,
     intersectionPlayOptions,
     scrollProgressOptions,
@@ -38,25 +40,25 @@ function Timeline<TTag extends HTMLTag = "div">(
   ref: Ref<TimelineHTMLRef | undefined>,
 ) {
   const paliga = useRef<ClassPaliga>(paligaRef?.current ?? new ClassPaliga());
-  const innerRef = useRef<TimelineHTMLRef>();
-  const element = React.createElement(as, { ...args, ref: innerRef });
+  const elementRef = useRef<TimelineHTMLRef>();
+  const element = React.createElement(as, { ...args, ref: elementRef });
   const [isPlayReady, setIsPlayReady] = useState(false);
   const [isIntersectionPlayReady, setIsIntersectionPlayReady] = useState(false);
   const [isScrollProgressReady, setIsScrollProgressReady] = useState(false);
 
   // # ref
   useImperativeHandle(ref, () => {
-    if (!innerRef.current) {
+    if (!elementRef.current) {
       return;
     }
-    innerRef.current.paliga = paliga.current;
+    elementRef.current.paliga = paliga.current;
 
-    return innerRef.current;
+    return elementRef.current;
   }, []);
 
   // # 기본 타임 라인 셋팅
   useLayoutEffect(() => {
-    const Element = innerRef.current;
+    const Element = elementRef.current;
 
     if (!timeline || !paliga.current || !Element) {
       return;
@@ -114,15 +116,13 @@ function Timeline<TTag extends HTMLTag = "div">(
     };
   }, []);
 
-  return <>{element}</>;
+  return (
+    <>
+      {element}
+      {isDevTool && <DevTool paligaRef={paliga} />}
+    </>
+  );
 }
-
-/** 자식 컴포넌트 */
-// const Item = forwardRef<HTMLElement, any>(({ as = "div", ...args }, ref) => {
-//   const element = React.createElement(as, { ...args, ref });
-//   return <>{element}</>;
-// });
-// Item.displayName = "Item";
 
 /** ===== Others ===== */
 
@@ -138,6 +138,8 @@ export type TimelineProps<TTag extends HTMLTag> = {
   isIntersectionPlay?: boolean;
   /** true 일 경우 scrollProgress 시작 */
   isScrollProgress?: boolean;
+  /** true 일 경우 개발 도구 활성화 */
+  isDevTool?: boolean;
   /** auto play 시 옵션 정의 */
   autoPlayOptions?: TPlayOptions;
   /** intersectionPlay 옵션 */
@@ -153,11 +155,3 @@ export type TimelineProps<TTag extends HTMLTag> = {
 type HTMLTag = keyof HTMLElementTagNameMap;
 
 export default forwardRef(Timeline);
-
-// const Wrapper = forwardRef(Timeline) as React.ForwardRefExoticComponent<
-//   TimelineProps<keyof HTMLElementTagNameMap> & React.RefAttributes<TimelineHTMLRef | undefined>
-// > & { Item: typeof Item };
-
-// Wrapper.Item = Item;
-
-// export default Wrapper;

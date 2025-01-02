@@ -18,6 +18,7 @@ import { timeoutFn } from "./timeUtils";
 
 export class Paliga {
   #frameObservers: TFrameObserver[] = [];
+  #controlType: "play" | "intersectionPlay" | "scrollProgress" = "play";
   #state: "idle" | "running" | "paused" = "idle";
   #progress: number = 0;
   #totalDuration: number = 0;
@@ -42,6 +43,8 @@ export class Paliga {
   }: TPlayOptions = {}) {
     let newIteration = iteration;
     let instance = this;
+
+    this.#controlType = "play";
 
     if (instance.#state === "running") {
       return;
@@ -138,6 +141,7 @@ export class Paliga {
     onAnimationEnd,
     ...options
   }: TIntersectionPlayOptions = {}) {
+    this.#controlType = "intersectionPlay";
     this.#eachSchedule((schedule, i) => {
       const { element } = schedule;
       const newOption = typeof eachOptions === "function" ? eachOptions(schedule, i) : options;
@@ -192,6 +196,7 @@ export class Paliga {
     duration = 300,
     root,
   }: TScrollProgressOptions = {}) {
+    this.#controlType = "scrollProgress";
     if (this.#schedule.length === 0) {
       return;
     }
@@ -484,6 +489,7 @@ export class Paliga {
   /** 초기화 */
   allInitialize() {
     this.initializeObservers();
+    this.initializeFrameObservers();
     this.initializeScrollListeners();
 
     this.#totalDuration = 0;
@@ -504,6 +510,11 @@ export class Paliga {
     this.#intersectionObservers = [];
   }
 
+  /** 프레임 옵저버 초기화 */
+  initializeFrameObservers() {
+    this.#frameObservers = [];
+  }
+
   /** 스크롤 리스너 초기화 */
   initializeScrollListeners() {
     this.#scrollLisners.forEach(({ root, listener }) => {
@@ -511,6 +522,31 @@ export class Paliga {
     });
 
     this.#scrollLisners = [];
+  }
+
+  /** 스케쥴 반환 */
+  getSchedule() {
+    return [...this.#schedule];
+  }
+
+  /** 스케쥴 반환 */
+  getProgress() {
+    return this.#progress;
+  }
+
+  /** 스케쥴 반환 */
+  getState() {
+    return this.#state;
+  }
+
+  /** 전체 실행시간 반환 */
+  getTotalDuration() {
+    return this.#totalDuration;
+  }
+
+  /** 컨트롤 타입 반환 */
+  getControlType() {
+    return this.#controlType;
   }
 
   /** 스케쥴 엘리먼트 순회 */

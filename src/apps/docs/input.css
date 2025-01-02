@@ -33,4 +33,10 @@
   ::-webkit-scrollbar-track {
     background-color: transparent;
   }
+
+  /** prism */
+  code[class*="language-tsx"] {
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+  }
 }

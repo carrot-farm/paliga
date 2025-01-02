@@ -1,13 +1,10 @@
 "use client";
 import React, {
-  ComponentPropsWithoutRef,
   createContext,
-  forwardRef,
   MutableRefObject,
   ReactNode,
   useContext,
   useEffect,
-  useImperativeHandle,
   useLayoutEffect,
   useRef,
   useState,
@@ -19,6 +16,7 @@ import {
   TPlayOptions,
   TScrollProgressOptions,
 } from "../../types";
+import { TimelineGroupItem } from "./TimelineGroupItem";
 
 /** ===== Components ===== */
 
@@ -53,9 +51,11 @@ function TimelineGroup({
     const [first, ...others] = timeline;
     paligaRef.current.timeline(elements, first);
 
-    others.forEach((t) => {
-      paligaRef.current.timeline(t);
-    });
+    if (others.length > 0) {
+      others.forEach((t) => {
+        paligaRef.current.timeline(t);
+      });
+    }
 
     if (isAutoPlay && !isPlayReady && elements.length > 0) {
       paligaRef.current.play(autoPlayOptions);
@@ -115,41 +115,12 @@ function TimelineGroup({
   );
 }
 
-/** 자식 컴포넌트 */
-const Item = forwardRef<TItemElement | undefined, TTimelineGroupItemProps>(
-  ({ as = "div", ...args }, ref) => {
-    const innerRef = useRef<TItemElement<typeof as>>();
-    const element = React.createElement(as, { ...args, ref: innerRef });
-    const { setElements } = useTimelineGroup();
-    const [isReady, setIsReady] = useState(false);
-
-    /** 외부에서 접근 시 ref 제공  */
-    useImperativeHandle(ref, () => {
-      return innerRef.current;
-    }, []);
-
-    /** 마운트 */
-    useEffect(() => {
-      const Element = innerRef.current;
-      if (!Element || isReady) {
-        return;
-      }
-
-      setElements((prev) => [...prev, Element]);
-      setIsReady(true);
-    }, [isReady]);
-
-    return <>{element}</>;
-  },
-);
-Item.displayName = "Item";
-
 /** ===== Others ===== */
 /** 컨텍스트 */
 const TimelineGroupContext = createContext<TTimelineGroupContextValue | null>(null);
 
 /** hook */
-const useTimelineGroup = () => {
+export const useTimelineGroup = () => {
   const context = useContext(TimelineGroupContext);
 
   if (!context) {
@@ -161,7 +132,7 @@ const useTimelineGroup = () => {
 
 /** ===== Types ===== */
 export type TimelineGroupProps = {
-  /** 지정된 진행도까지 진행 */
+  /** 지정된 진행도까지 진행 f */
   progress?: number;
   /** true 일 경우 자동 시작 */
   isAutoPlay?: boolean;
@@ -183,12 +154,6 @@ export type TimelineGroupProps = {
   children?: ReactNode;
 };
 
-/** Item Props */
-export type TTimelineGroupItemProps<T extends HTMLTag = "div"> = {
-  /** 생성할 엘리먼트 */
-  as?: T;
-} & ComponentPropsWithoutRef<T>;
-
 /** 타임라인 그룹의 컨텍스트 */
 type TTimelineGroupContextValue = {
   /** timeline 적용 */
@@ -199,13 +164,6 @@ type TTimelineGroupContextValue = {
   setElements: React.Dispatch<React.SetStateAction<HTMLElement[]>>;
 };
 
-/** 자식 아이템의 엘리먼트 타입 */
-type TItemElement<T extends HTMLTag | undefined = undefined> = T extends HTMLTag
-  ? HTMLElementTagNameMap[T]
-  : HTMLElement;
-
-type HTMLTag = keyof HTMLElementTagNameMap;
-
-TimelineGroup.Item = Item;
+TimelineGroup.Item = TimelineGroupItem;
 
 export default TimelineGroup;

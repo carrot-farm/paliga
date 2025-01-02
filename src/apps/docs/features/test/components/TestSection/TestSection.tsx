@@ -1,5 +1,5 @@
 "use client";
-import { cn, Link } from "@nextui-org/react";
+import { Button, cn, Link, Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import {
   forwardRef,
   MutableRefObject,
@@ -10,7 +10,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { IoCodeSlashSharp } from "react-icons/io5";
 import { Paliga } from "../../../../../../core/Paliga";
+import TestSectionCode from "./TestSectionCode";
 import TestSectionController from "./TestSectionController";
 
 /** ===== Components ===== */
@@ -19,6 +21,7 @@ function TestSection({
   title,
   titleLink,
   description,
+  code,
   className,
   defaultProgress,
   scrollTrigger,
@@ -41,6 +44,7 @@ function TestSection({
   const [newScrollStart, setNewScrollStart] = useState<number>();
   const [newScrollEnd, setNewScrollEnd] = useState<number>();
   const [newScrollTrigger, setNewScrollTrigger] = useState<number>();
+  const [isOpenCode, setIsOpenCode] = useState(false);
 
   // # onReady
   useEffect(() => {
@@ -115,6 +119,14 @@ function TestSection({
         <div className="flex-1">
           {description && <p className="mt-2 text-xs text-gray-400">{description}</p>}
         </div>
+        <div>
+          {/* 코드 버튼 */}
+          {code && (
+            <Button variant="bordered" size="sm" isIconOnly onPress={() => setIsOpenCode(true)}>
+              <IoCodeSlashSharp />
+            </Button>
+          )}
+        </div>
       </div>
 
       <div
@@ -146,6 +158,16 @@ function TestSection({
           </div>
         </div>
       </div>
+
+      {/* code dialog */}
+      <Modal placement="center" size="3xl" isOpen={isOpenCode} onOpenChange={setIsOpenCode}>
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalBody>
+            <TestSectionCode>{code}</TestSectionCode>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </section>
   );
 }
@@ -222,6 +244,8 @@ export type TestSectionProps = {
   titleLink?: string;
   /** 설명 */
   description?: string;
+  /** 코드 */
+  code?: string;
   /** 클래스 */
   className?: string;
   /** 기본 progress */
