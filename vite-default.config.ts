@@ -17,7 +17,7 @@ export const defaultConfig: UserConfig = {
     /** 패키지 형태로 빌드하기 위한 설정 */
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "some-components",
+      name: "Paliga",
       formats: ["cjs", "es"],
       /** 빌드시 파일명 지정. 미지정 시 name을 기준으로 생성됨 */
       fileName: (format) => {
@@ -49,6 +49,7 @@ export const defaultConfig: UserConfig = {
       ),
       /** `auto`설정 시 CommonJS, ESM을 모두 지원 */
       output: {
+        name: "Paliga",
         interop: "auto",
         chunkFileNames: "chunks/[name].[hash].js",
         assetFileNames: "assets/[name][extname]", // assets output
@@ -59,7 +60,7 @@ export const defaultConfig: UserConfig = {
         },
       },
       /** 빌드 시 react를 제외. 그 외에도 제외할 라이브러리를 정의 */
-      external: ["react", "react/jsx-runtime"],
+      external: ["react", "react-dom", "react/jsx-runtime"],
       plugins: [
         swc({
           swc: {
