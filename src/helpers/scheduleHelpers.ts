@@ -168,13 +168,27 @@ export const getFromAnimationState = ({
     x = transition.x !== undefined ? 0 : undefined,
     y = transition.y !== undefined ? 0 : undefined,
     z = transition.z !== undefined ? 0 : undefined,
+    scaleX = transition.scaleX !== undefined || transition.scale !== undefined ? 1 : undefined,
+    scaleY = transition.scaleY !== undefined || transition.scale !== undefined ? 1 : undefined,
+    scaleZ = transition.scaleZ !== undefined ? 1 : undefined,
     rotateX = transition.rotateX !== undefined ? 0 : undefined,
     rotateY = transition.rotateY !== undefined ? 0 : undefined,
     rotateZ = transition.rotateZ !== undefined || transition.rotate !== undefined ? 0 : undefined,
+    width = transition.width !== undefined ? getElementStyleToNumber(element, "width") : undefined,
+    height = transition.height !== undefined
+      ? getElementStyleToNumber(element, "height")
+      : undefined,
     opacity = transition.opacity !== undefined
       ? getElementStyleToNumber(element, "opacity")
       : undefined,
-    scale = transition.scale ? [1, 1, 1] : undefined,
+    borderWidth = transition.borderWidth !== undefined
+      ? getElementStyleToNumber(element, "border-width")
+      : undefined,
+    borderColor = transition.borderColor !== undefined
+      ? convertToRgbaNumbers(
+          element.computedStyleMap().get("border-color")?.toString() ?? "rgba(0,0,0,0)",
+        )
+      : undefined,
     backgroundColor = transition.backgroundColor !== undefined
       ? convertToRgbaNumbers(
           element.computedStyleMap().get("background-color")?.toString() ?? "rgba(0,0,0,0)",
@@ -185,7 +199,7 @@ export const getFromAnimationState = ({
     progress: 0,
   };
 
-  // console.log("> ee: ");
+  // console.log("> from: ", scaleX);
 
   return {
     duration,
@@ -193,11 +207,17 @@ export const getFromAnimationState = ({
     x,
     y,
     z,
-    opacity,
-    scale,
+    scaleX,
+    scaleY,
+    scaleZ,
     rotateX,
     rotateY,
     rotateZ,
+    width,
+    height,
+    opacity,
+    borderWidth,
+    borderColor,
     backgroundColor,
   };
 };
@@ -214,30 +234,51 @@ export const getToAnimationState = ({
   from: TAnimationState;
   transition: TTransition;
 }) => {
-  const { direction, backgroundColor, opacity, scale, x, y, z, rotate, rotateX, rotateY, rotateZ } =
-    transition;
+  const {
+    direction,
+    backgroundColor,
+    x,
+    y,
+    z,
+    scale,
+    scaleX,
+    scaleY,
+    scaleZ,
+    rotate,
+    rotateX,
+    rotateY,
+    rotateZ,
+    width,
+    height,
+    opacity,
+    borderWidth,
+    borderColor,
+  } = transition;
   const to: TAnimationState = {
     duration,
     progress,
     x: getDirectionValue(x, from.x, direction === "reverse"),
     y: getDirectionValue(y, from.y, direction === "reverse"),
     z: getDirectionValue(z, from.z, direction === "reverse"),
+    scaleX: typeof (scaleX ?? scale) === "number" ? (scaleX ?? scale) : from.scaleX,
+    scaleY: typeof (scaleY ?? scale) === "number" ? (scaleY ?? scale) : from.scaleY,
+    scaleZ: typeof scaleZ === "number" ? scaleZ : from.scaleZ,
     rotateX: getDirectionValue(rotateX, from.rotateX, direction === "reverse"),
     rotateY: getDirectionValue(rotateY, from.rotateY, direction === "reverse"),
     rotateZ: getDirectionValue(rotateZ ?? rotate, from.rotateZ, direction === "reverse"),
+    width: typeof width === "number" ? width : from.width,
+    height: typeof height === "number" ? height : from.height,
     opacity: typeof opacity === "number" ? opacity : from.opacity,
+    borderWidth: typeof borderWidth === "number" ? borderWidth : from.borderWidth,
+    borderColor:
+      typeof borderColor === "string" ? convertToRgbaNumbers(borderColor) : from.borderColor,
     backgroundColor:
       typeof backgroundColor === "string"
         ? convertToRgbaNumbers(backgroundColor)
         : from.backgroundColor,
-    scale: Array.isArray(scale)
-      ? [
-          scale[0] ?? from.scale?.[0] ?? 1,
-          scale[1] ?? from.scale?.[1] ?? 1,
-          scale[2] ?? from.scale?.[2] ?? 1,
-        ]
-      : from.scale,
   };
+
+  // console.log("> to: ", from, to);
 
   return to;
 };

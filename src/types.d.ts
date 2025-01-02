@@ -59,7 +59,23 @@ export type TScrollProgressOptions = {
 };
 
 /** each 속성 호출 시 전달받는 인자 */
-export type TEachState = Pick<TTransition, "direction" | "easing" | "x" | "y" | "delay">;
+export type TEachState = Pick<
+  TTransition,
+  | "direction"
+  | "easing"
+  | "x"
+  | "y"
+  | "z"
+  | "scale"
+  | "scaleX"
+  | "scaleY"
+  | "scaleZ"
+  | "width"
+  | "height"
+  | "borderWidth"
+  | "borderColor"
+  | "delay"
+>;
 
 /** ===== 상태 ===== */
 export type TFrameObserver = (
@@ -88,7 +104,7 @@ export type TTransition = {
   /** 엘리먼트별 스타일 적용 */
   each?: (state: TEachState, index: number) => Partial<TEachState>;
   /** 프레임마다 실행 */
-  onFrame?: (params: TOnFrameParams) => Partial<{ progress: number } & TStylesState> | undefined;
+  onFrame?: (params: TOnFrameParams) => Partial<{ progress: number } & TStylesState> | void;
 } & TStylesState;
 
 /** onFrame 파라메터 */
@@ -171,21 +187,27 @@ export type TStylesState = {
   x?: number;
   y?: number;
   z?: number;
-  opacity?: number;
-  scale?: TStylesStateScale;
+  scale?: number;
+  scaleX?: number;
+  scaleY?: number;
+  scaleZ?: number;
   rotate?: number;
   rotateX?: number;
   rotateY?: number;
   rotateZ?: number;
+  width?: number;
+  height?: number;
+  opacity?: number;
+  borderWidth?: number;
+  borderColor?: string | [number, number, number, number];
   backgroundColor?: string | [number, number, number, number];
 };
 
-type TStylesStateScale = [number] | [number, number] | [number, number, number];
-
 export type TApplyStylesParams = {
   backgroundColor?: [number, number, number, number];
+  borderColor?: [number, number, number, number];
   el: HTMLElement;
-} & Omit<TStylesState, "backgroundColor">;
+} & Omit<TStylesState, "backgroundColor" | "borderColor">;
 
 /** ===== ReactComponent ===== */
 type HTMLTag = keyof HTMLElementTagNameMap;

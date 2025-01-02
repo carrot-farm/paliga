@@ -82,6 +82,7 @@ export const getAnimationToStyle = ({
   animation: TAnimation;
 }): {
   animationProgress: number;
+  borderColor: Exclude<TStylesState["borderColor"], string>;
   backgroundColor: Exclude<TStylesState["backgroundColor"], string>;
 } & Omit<TStylesState, "backgroundColor"> => {
   const { from, toDelay, to, easing = "linear", onFrame } = animation;
@@ -101,11 +102,26 @@ export const getAnimationToStyle = ({
   let x: number | undefined = from.x;
   let y: number | undefined = from.y;
   let z: number | undefined = from.z;
-  let opacity: number | undefined = from.opacity;
-  let scale: TAnimationState["scale"] = from.scale;
+  let scaleX: TAnimationState["scaleX"] = from.scaleX;
+  let scaleY: TAnimationState["scaleY"] = from.scaleY;
+  let scaleZ: TAnimationState["scaleZ"] = from.scaleZ;
+  let width: TAnimationState["width"] = from.width;
+  let height: TAnimationState["height"] = from.height;
   let rotateX: TAnimationState["rotateX"] = from.rotateX;
   let rotateY: TAnimationState["rotateY"] = from.rotateY;
   let rotateZ: TAnimationState["rotateZ"] = from.rotateZ;
+  let opacity: number | undefined = from.opacity;
+  let borderWidth: TAnimationState["borderWidth"] = from.borderWidth;
+  let borderColor: TAnimationState["borderColor"] = Array.isArray(from.borderColor)
+    ? from.borderColor
+    : undefined;
+  const toBorderColor = Array.isArray(to.borderColor) ? to.borderColor : undefined;
+  const frameBorderColor =
+    typeof frame?.borderColor === "string"
+      ? convertToRgbaNumbers(frame.borderColor)
+      : Array.isArray(frame?.borderColor)
+        ? frame.borderColor
+        : undefined;
   let backgroundColor: Exclude<TAnimationState["backgroundColor"], string> = Array.isArray(
     from.backgroundColor,
   )
@@ -123,20 +139,28 @@ export const getAnimationToStyle = ({
     x = frame?.x ?? getProgressValue(from.x, to.x, easingProgress);
     y = frame?.y ?? getProgressValue(from.y, to.y, easingProgress);
     z = frame?.z ?? getProgressValue(from.z, to.z, easingProgress);
-    opacity = frame?.opacity ?? getProgressValue(from.opacity, to.opacity, easingProgress);
+    scaleX = frame?.scaleX ?? getProgressValue(from.scaleX, to.scaleX, easingProgress);
+    scaleY = frame?.scaleY ?? getProgressValue(from.scaleY, to.scaleY, easingProgress);
+    scaleZ = frame?.scaleZ ?? getProgressValue(from.scaleZ, to.scaleZ, easingProgress);
     rotateX = frame?.rotateX ?? getProgressValue(from.rotateX, to.rotateX, easingProgress);
     rotateY = frame?.rotateY ?? getProgressValue(from.rotateY, to.rotateY, easingProgress);
     rotateZ = frame?.rotateZ ?? getProgressValue(from.rotateZ, to.rotateZ, easingProgress);
-    scale =
-      frame?.scale ??
-      (from.scale || to.scale
+    width = frame?.width ?? getProgressValue(from.width, to.width, easingProgress);
+    height = frame?.height ?? getProgressValue(from.height, to.height, easingProgress);
+    rotateZ = frame?.rotateZ ?? getProgressValue(from.rotateZ, to.rotateZ, easingProgress);
+    opacity = frame?.opacity ?? getProgressValue(from.opacity, to.opacity, easingProgress);
+    borderWidth =
+      frame?.borderWidth ?? getProgressValue(from.borderWidth, to.borderWidth, easingProgress);
+    borderColor =
+      frameBorderColor ??
+      (borderColor || toBorderColor
         ? [
-            getProgressValue(from.scale?.[0], to.scale?.[0], easingProgress) ?? 1,
-            getProgressValue(from.scale?.[1], to.scale?.[1], easingProgress) ?? 1,
-            getProgressValue(from.scale?.[2], to.scale?.[2], easingProgress) ?? 1,
+            getProgressValue(borderColor?.[0], toBorderColor?.[0], easingProgress) ?? 0,
+            getProgressValue(borderColor?.[1], toBorderColor?.[1], easingProgress) ?? 0,
+            getProgressValue(borderColor?.[2], toBorderColor?.[2], easingProgress) ?? 0,
+            getProgressValue(borderColor?.[3], toBorderColor?.[3], easingProgress) ?? 0,
           ]
         : undefined);
-
     backgroundColor =
       frameBackground ??
       (backgroundColor || toBackgroundColor
@@ -154,11 +178,17 @@ export const getAnimationToStyle = ({
     x,
     y,
     z,
-    opacity,
-    scale,
+    scaleX,
+    scaleY,
+    scaleZ,
     rotateX,
     rotateY,
     rotateZ,
+    width,
+    height,
+    opacity,
+    borderWidth,
+    borderColor,
     backgroundColor,
   };
 };
@@ -231,7 +261,7 @@ export const animationsRunner = ({
         animation,
       });
 
-      // console.log("> ", styles);
+      // console.log("> style: ", styles);
 
       // 엘리먼트에 스타일 적용
       ApplyStyles.router({
@@ -239,11 +269,17 @@ export const animationsRunner = ({
         x: styles.x,
         y: styles.y,
         z: styles.z,
-        opacity: styles.opacity,
-        scale: styles.scale,
+        scaleX: styles.scaleX,
+        scaleY: styles.scaleY,
+        scaleZ: styles.scaleZ,
         rotateX: styles.rotateX,
         rotateY: styles.rotateY,
         rotateZ: styles.rotateZ,
+        width: styles.width,
+        height: styles.height,
+        opacity: styles.opacity,
+        borderWidth: styles.borderWidth,
+        borderColor: styles.borderColor,
         backgroundColor: styles.backgroundColor,
       });
 

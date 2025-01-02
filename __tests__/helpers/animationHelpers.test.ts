@@ -118,7 +118,7 @@ describe("animationsRunner()", () => {
 
     expect(spyOnAnimationEnd).toBeCalledTimes(1);
     expect(spyOnAnimationEnd).toBeCalledWith({ progress: 1, elapsed: 500 });
-    expect(transform).toBe("translate3d(300px,180px,0px)");
+    expect(transform).toBe("translateX(300px) translateY(180px)");
   });
 
   test("0 ~ 0.2 진행도 확인", () => {
@@ -134,7 +134,7 @@ describe("animationsRunner()", () => {
 
     expect(spyOnAnimationEnd).toBeCalledTimes(1);
     expect(spyOnAnimationEnd).toBeCalledWith({ progress: 0.2, elapsed: 100 });
-    expect(transform).toBe("translate3d(60.60606060606061px,48.484848484848484px,0px)");
+    expect(transform).toBe("translateX(60.60606060606061px) translateY(48.484848484848484px)");
   });
 
   test("0.2 ~ 1 진행도 확인", () => {
@@ -160,7 +160,7 @@ describe("animationsRunner()", () => {
     expect(firstFrame).toEqual({ progress: 0.2, elapsed: 100 });
     expect(spyOnAnimationEnd).toBeCalledTimes(1);
     expect(spyOnAnimationEnd).toBeCalledWith({ progress: 1, elapsed: 500 });
-    expect(transform).toBe("translate3d(300px,180px,0px)");
+    expect(transform).toBe("translateX(300px) translateY(180px)");
   });
 
   test("0.8 ~ 0.2 역진행도 확인", () => {
@@ -186,6 +186,6 @@ describe("animationsRunner()", () => {
     expect(spyOnAnimationEnd).toBeCalledTimes(1);
     expect(firstFrame).toEqual({ progress: 0.8, elapsed: 100 });
     expect(spyOnAnimationEnd).toBeCalledWith({ progress: 0.2, elapsed: 400 });
-    expect(transform).toBe("translate3d(60.60606060606061px,48.484848484848484px,0px)");
+    expect(transform).toBe("translateX(60.60606060606061px) translateY(48.484848484848484px)");
   });
 });
