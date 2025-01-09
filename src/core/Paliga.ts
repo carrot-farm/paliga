@@ -537,6 +537,11 @@ export class Paliga {
     return [...this.#schedule];
   }
 
+  /** segment 반환 */
+  getSegments() {
+    return [...this.#segments];
+  }
+
   /** 스케쥴 반환 */
   getProgress() {
     return this.#progress;

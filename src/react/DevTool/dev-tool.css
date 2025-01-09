@@ -69,3 +69,51 @@
 [data-paliga-dev-tool="progress-slider__right"] {
   width: 24px;
 }
+
+/** ===== 슬라이더 ===== */
+[data-paliga-dev-tool="dev-tool-slider"] {
+  position: "relative";
+  display: grid;
+  grid-template-columns: 10px 1fr 10px;
+}
+[data-paliga-dev-tool="dev-tool-slider__center-container"] {
+  position: relative;
+}
+
+[data-paliga-dev-tool="dev-tool-slider__bg"] {
+  height: 4px;
+  background-color: #555;
+  opacity: 0.5;
+  border-radius: 9999px;
+}
+[data-paliga-dev-tool="dev-tool-slider__progress"] {
+  position: absolute;
+  top: 50%;
+  margin-top: -2px;
+  height: 4px;
+  z-index: 1;
+  background-color: var(--paliga-color);
+  border-radius: 9999px;
+  width: 0;
+}
+
+[data-paliga-dev-tool="dev-tool-slider__thumb-container"] {
+  z-index: 2;
+  width: 20px;
+  height: 20px;
+  border: 2px solid;
+  border-color: var(--paliga-color);
+  border-radius: 9999px;
+  box-sizing: border-box;
+  /* background-color: #000; */
+  cursor: grab;
+  position: absolute;
+  top: 50%;
+  margin-top: -10px;
+  transform: translateX(-10px);
+}
+
+body[data-paliga-dev-tool_slider-grabbing="true"],
+body[data-paliga-dev-tool_slider-grabbing="true"] * {
+  cursor: grabbing !important;
+}
