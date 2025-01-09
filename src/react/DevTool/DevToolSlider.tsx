@@ -15,56 +15,19 @@ function DevToolSlider({
   const progressRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
-  const offset = useRef<{
-    // startX: number;
-    // lastX: number;
-    // x: number;
-    elX: number;
-    // progress: number;
-    prevProgress: number;
-  }>({
-    // startX: 0,
-    // lastX: 0,
-    // x: 0,
-    elX: 0,
-    // progress: 0,
-    prevProgress: 0,
-  });
+  const offset = useRef<{ elX: number; prevProgress: number }>({ elX: 0, prevProgress: 0 });
   const [isGrabbing, setIsGrabbing] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [minX] = useState(0);
   const [maxX, setMaxX] = useState(1);
-  // const [currentX, setCurrentX] = useState(0);
-  // const [p, setP] = useState(0);
-  // const np = p * 100;
-  // const progressX = Math.max(Math.min(currentX / maxX, maxX), minX);
   const diffX = maxX - minX;
   const diff = max - min;
-  // const newValue = value !== undefined ? Number(value) : diff * progressX;
-  // const steppedProgress = getStepProgress({
-  //   value: newValue,
-  //   min,
-  //   max,
-  //   step,
-  // });
-  // const steppedPercent = steppedProgress * 100;
   const stepRate = step / diff;
   const stepX = diffX * stepRate;
   const fillOffsetProgress = useMemo(() => {
     const progress = getStepProgress({ value: fillOffset, min, max, step });
-    // console.log("> f: ", progress);
     return progress;
   }, [fillOffset, min, max, step]);
-
-  // const progressBarPosition = fillOffsetProgress > 0 ? ''
-  // const steppedProgressX = getStepProgress({
-  //   value: currentX,
-  //   min: minX,
-  //   max: maxX,
-  //   step: stepX,
-  // });
-
-  // console.log("> ", min, max, diff);
 
   /** 마우스 다운 */
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -73,10 +36,8 @@ function DevToolSlider({
       return;
     }
     // console.log("> down: ", e.clientX, bgRef.current.getBoundingClientRect().x);
-    // offset.current.startX = e.clientX;
     offset.current.elX = Math.floor(bgRef.current.getBoundingClientRect().x);
     setMaxX(bgRef.current.clientWidth);
-
     document.body.setAttribute("data-paliga-dev-tool_slider-grabbing", "true");
     setIsGrabbing(true);
   };
@@ -121,7 +82,7 @@ function DevToolSlider({
       if (!bgRef.current) {
         return;
       }
-
+      offset.current.elX = Math.floor(bgRef.current.getBoundingClientRect().x);
       setMaxX(bgRef.current.clientWidth);
     };
 
@@ -133,42 +94,13 @@ function DevToolSlider({
     };
   }, [isReady]);
 
-  /** 변경시 */
-  // useEffect(() => {
-  //   if (typeof onChange !== "function") {
-  //     return;
-  //   }
-  //   const newValue = Math.max(Math.min(diff * steppedProgressX, max), min);
-  //   onChange(newValue);
-  // }, [steppedProgressX, diff, min, max, onChange]);
-
-  /** 주입된 값 변경 시 */
-  // useEffect(() => {
-  //   if (value === undefined) {
-  //     return;
-  //   }
-
-  //   const newCurrentX = Math.floor(diffX * steppedProgress);
-
-  //   offset.current.lastX = newCurrentX;
-
-  //   setCurrentX(newCurrentX);
-  // }, [value, steppedProgress, diffX]);
-
   // # 값이 있을 경우 반영
   useEffect(() => {
     if (value === undefined) {
       return;
     }
+
     const progress = getStepProgress({ value: Number(value), min, max, step });
-    // const x = Math.floor(diffX * progress);
-    // console.log("> Value: ", min, max, step, value, progress);
-
-    // offset.current.x = x;
-    // offset.current.lastX = x;
-    // offset.current.prevProgress = progress;
-
-    // setCurrentX(x);
     changeProgressBar(progress);
   }, [value, min, max, step]);
 
@@ -183,34 +115,18 @@ function DevToolSlider({
 
       if (typeof onChange === "function" && progress !== prevProgress) {
         const value = minMax(diff * progress + min, min, max);
-        // console.log("> ", progress.toFixed(2), fillOffsetProgress.toFixed(2));
         onChange({ value, progress });
       }
-
-      // offset.current.prevProgress = progress;
 
       if (value !== undefined) {
         return;
       }
-      // offset.current.x = calcX;
-      // offset.current.progress = progress;
-
-      // setP(progress);
-      // setCurrentX(calcX);
       changeProgressBar(progress);
     };
 
     /** 마우스 업 */
     const handleMouseUp = (e: MouseEvent) => {
       e.preventDefault();
-      // const lastX = diffX * steppedProgress;
-      // const lastX = Math.floor(diffX * offset.current.prevProgress);
-      // console.log("> up: ", offset.current.progress);
-
-      // offset.current.lastX = lastX;
-      // offset.current.x = lastX;
-
-      // setCurrentX(lastX);
       setIsGrabbing(false);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -276,7 +192,6 @@ const getStepProgress = ({
   const newValue = value - min;
   const diff = max - min;
   const rate = diff / step;
-  // return minMax(Math.round(newValue / step) / rate, 0, 1);
   return Math.round(newValue / step) / rate;
 };
 
