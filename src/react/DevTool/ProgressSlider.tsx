@@ -22,14 +22,6 @@ function ProgressSlider({ paligaRef }: { paligaRef: DevToolProps["paligaRef"] })
     paligaRef.current.getState(),
   );
 
-  /** 진행도 변경 */
-  // const handleProgressChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const newProgress = Number(e.currentTarget.value);
-  const handleProgressChange = (v: number) => {
-    console.log("> ", v);
-    // moveProgress(v);
-  };
-
   /** 실행 클릭 */
   const handlePlayClick = () => {
     if (progress === 0 || progress === 1) {
@@ -92,14 +84,17 @@ function ProgressSlider({ paligaRef }: { paligaRef: DevToolProps["paligaRef"] })
           )}
 
           <DevToolSlider
-            min={0}
-            max={1}
-            step={0.01}
-            value={progress.toFixed(2)}
-            onChange={({ value }) => {
-              // console.log("change: \n", value, "\n", progress);
-              moveProgress(value);
-            }}
+            // min={0}
+            // max={1}
+            // step={0.01}
+            // value={progress.toFixed(2)}
+            // onChange={({ value }) => moveProgress(value)}
+
+            min={-100}
+            max={100}
+            step={20}
+            // value={progress.toFixed(2)}
+            // onChange={({ value }) => moveProgress(value)}
           />
         </div>
 

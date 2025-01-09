@@ -15,15 +15,15 @@ function DevToolSlider({
   const bgRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
   const offset = useRef<{
-    startX: number;
-    lastX: number;
+    // startX: number;
+    // lastX: number;
     x: number;
     elX: number;
     progress: number;
     prevProgress: number;
   }>({
-    startX: 0,
-    lastX: 0,
+    // startX: 0,
+    // lastX: 0,
     x: 0,
     elX: 0,
     progress: 0,
@@ -32,8 +32,8 @@ function DevToolSlider({
   const [isGrabbing, setIsGrabbing] = useState(false);
   const [minX] = useState(0);
   const [maxX, setMaxX] = useState(1);
-  const [currentX, setCurrentX] = useState(0);
-  const [p, setP] = useState(0);
+  // const [currentX, setCurrentX] = useState(0);
+  // const [p, setP] = useState(0);
   // const np = p * 100;
   // const progressX = Math.max(Math.min(currentX / maxX, maxX), minX);
   const diffX = maxX - minX;
@@ -64,7 +64,7 @@ function DevToolSlider({
       return;
     }
     // console.log("> down: ", e.clientX, bgRef.current.getBoundingClientRect().x);
-    offset.current.startX = e.clientX;
+    // offset.current.startX = e.clientX;
     offset.current.elX = Math.floor(bgRef.current.getBoundingClientRect().x);
     setMaxX(bgRef.current.clientWidth);
 
@@ -134,7 +134,7 @@ function DevToolSlider({
     // offset.current.lastX = x;
     offset.current.prevProgress = progress;
 
-    setCurrentX(x);
+    // setCurrentX(x);
     changeProgressBar(progress);
   }, [value, min, max, step, diffX]);
 
@@ -143,9 +143,7 @@ function DevToolSlider({
     /** 마우스 움직임 */
     const handleMouseMove = (e: MouseEvent) => {
       e.preventDefault();
-      const { startX, lastX, elX, prevProgress } = offset.current;
-      // const addX = e.clientX - startX;
-      // const calcX = minMax(lastX + addX, minX, maxX);
+      const { elX, prevProgress } = offset.current;
       const calcX = minMax(e.clientX - elX, minX, maxX);
       const progress = getStepProgress({ value: calcX, min: minX, max: maxX, step: stepX });
 
@@ -162,8 +160,8 @@ function DevToolSlider({
       offset.current.x = calcX;
       offset.current.progress = progress;
 
-      setP(progress);
-      setCurrentX(calcX);
+      // setP(progress);
+      // setCurrentX(calcX);
       changeProgressBar(progress);
     };
 
@@ -174,10 +172,10 @@ function DevToolSlider({
       const lastX = Math.floor(diffX * offset.current.progress);
       // console.log("> up: ", offset.current.progress);
 
-      offset.current.lastX = lastX;
+      // offset.current.lastX = lastX;
       offset.current.x = lastX;
 
-      setCurrentX(lastX);
+      // setCurrentX(lastX);
       setIsGrabbing(false);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
@@ -200,7 +198,6 @@ function DevToolSlider({
     <div data-paliga-dev-tool="dev-tool-slider" className={className}>
       <div data-paliga-dev-tool="dev-tool-slider__left-container"></div>
       <div data-paliga-dev-tool="dev-tool-slider__center-container">
-        <p style={{ position: "absolute", top: "-60px", fontSize: "0.8rem" }}>x: {currentX}</p>
         {/* progress */}
         <div data-paliga-dev-tool="dev-tool-slider__progress" ref={progressRef}></div>
 
@@ -213,7 +210,9 @@ function DevToolSlider({
           data-is-granning={isGrabbing}
           ref={thumbRef}
           onMouseDown={handleMouseDown}
-        ></div>
+        >
+          <div data-paliga-dev-tool="dev-tool-slider__thumb"></div>
+        </div>
       </div>
       <div data-paliga-dev-tool="dev-tool-slider__right-container"></div>
     </div>
