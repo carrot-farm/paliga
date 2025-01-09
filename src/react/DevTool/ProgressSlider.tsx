@@ -84,17 +84,21 @@ function ProgressSlider({ paligaRef }: { paligaRef: DevToolProps["paligaRef"] })
           )}
 
           <DevToolSlider
-            // min={0}
-            // max={1}
-            // step={0.01}
-            // value={progress.toFixed(2)}
-            // onChange={({ value }) => moveProgress(value)}
+            min={0}
+            max={1}
+            step={0.01}
+            value={progress.toFixed(2)}
+            onChange={({ value }) => moveProgress(value)}
 
-            min={-100}
-            max={100}
-            step={20}
+            // min={-1}
+            // max={1}
+            // step={0.1}
+            // fillOffset={0.2}
+            // value={0.7}
             // value={progress.toFixed(2)}
             // onChange={({ value }) => moveProgress(value)}
+            // onChange={console.log}
+            // onChange={() => {}}
           />
         </div>
 

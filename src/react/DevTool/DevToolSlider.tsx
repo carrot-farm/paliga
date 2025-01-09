@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { minMax } from "../../helpers/mathHelpers";
 
 /** ===== Components ===== */
@@ -8,6 +8,7 @@ function DevToolSlider({
   min = 0,
   max = 100,
   step = 1,
+  fillOffset = min,
   value,
   onChange,
 }: DevToolSliderProps) {
@@ -17,19 +18,20 @@ function DevToolSlider({
   const offset = useRef<{
     // startX: number;
     // lastX: number;
-    x: number;
+    // x: number;
     elX: number;
-    progress: number;
+    // progress: number;
     prevProgress: number;
   }>({
     // startX: 0,
     // lastX: 0,
-    x: 0,
+    // x: 0,
     elX: 0,
-    progress: 0,
+    // progress: 0,
     prevProgress: 0,
   });
   const [isGrabbing, setIsGrabbing] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [minX] = useState(0);
   const [maxX, setMaxX] = useState(1);
   // const [currentX, setCurrentX] = useState(0);
@@ -48,6 +50,13 @@ function DevToolSlider({
   // const steppedPercent = steppedProgress * 100;
   const stepRate = step / diff;
   const stepX = diffX * stepRate;
+  const fillOffsetProgress = useMemo(() => {
+    const progress = getStepProgress({ value: fillOffset, min, max, step });
+    // console.log("> f: ", progress);
+    return progress;
+  }, [fillOffset, min, max, step]);
+
+  // const progressBarPosition = fillOffsetProgress > 0 ? ''
   // const steppedProgressX = getStepProgress({
   //   value: currentX,
   //   min: minX,
@@ -55,7 +64,7 @@ function DevToolSlider({
   //   step: stepX,
   // });
 
-  // console.log("> ", stepRate);
+  // console.log("> ", min, max, diff);
 
   /** 마우스 다운 */
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -78,13 +87,36 @@ function DevToolSlider({
       return;
     }
     const percent = progress * 100;
+    const progressBarPosition = progress >= fillOffsetProgress ? "fillOffset" : "thumb";
 
-    progressRef.current.style.width = `${percent}%`;
+    if (progressBarPosition === "fillOffset") {
+      const progressPercent = (progress - fillOffsetProgress) * 100;
+      progressRef.current.style.left = `${Math.floor(fillOffsetProgress * 100)}%`;
+      progressRef.current.style.width = `${progressPercent}%`;
+    } else {
+      const progressPercent = (fillOffsetProgress - progress) * 100;
+      // console.log("> ", progress, fillOffsetProgress, progressBarPosition);
+      progressRef.current.style.left = `${percent}%`;
+      progressRef.current.style.width = `${progressPercent}%`;
+    }
+
     thumbRef.current.style.left = `${percent}%`;
+    offset.current.prevProgress = progress;
   };
+
+  // console.log("> ", fillOffsetProgress);
 
   /** 크기 확인 */
   useEffect(() => {
+    if (isReady) {
+      return;
+    }
+    // # filloffset
+    if (value === undefined && fillOffsetProgress > 0) {
+      changeProgressBar(fillOffsetProgress);
+    }
+
+    // # maxX 셋팅
     const checkMaxX = () => {
       if (!bgRef.current) {
         return;
@@ -95,10 +127,11 @@ function DevToolSlider({
 
     checkMaxX();
     window.addEventListener("resize", checkMaxX);
+    setIsReady(true);
     return () => {
       window.removeEventListener("resize", checkMaxX);
     };
-  }, []);
+  }, [isReady]);
 
   /** 변경시 */
   // useEffect(() => {
@@ -122,21 +155,22 @@ function DevToolSlider({
   //   setCurrentX(newCurrentX);
   // }, [value, steppedProgress, diffX]);
 
+  // # 값이 있을 경우 반영
   useEffect(() => {
     if (value === undefined) {
       return;
     }
     const progress = getStepProgress({ value: Number(value), min, max, step });
-    const x = Math.floor(diffX * progress);
+    // const x = Math.floor(diffX * progress);
     // console.log("> Value: ", min, max, step, value, progress);
 
     // offset.current.x = x;
     // offset.current.lastX = x;
-    offset.current.prevProgress = progress;
+    // offset.current.prevProgress = progress;
 
     // setCurrentX(x);
     changeProgressBar(progress);
-  }, [value, min, max, step, diffX]);
+  }, [value, min, max, step]);
 
   /** 이벤트 */
   useEffect(() => {
@@ -148,17 +182,18 @@ function DevToolSlider({
       const progress = getStepProgress({ value: calcX, min: minX, max: maxX, step: stepX });
 
       if (typeof onChange === "function" && progress !== prevProgress) {
-        const value = minMax(diff * progress, min, max);
+        const value = minMax(diff * progress + min, min, max);
+        // console.log("> ", progress.toFixed(2), fillOffsetProgress.toFixed(2));
         onChange({ value, progress });
       }
 
-      offset.current.prevProgress = progress;
+      // offset.current.prevProgress = progress;
 
       if (value !== undefined) {
         return;
       }
-      offset.current.x = calcX;
-      offset.current.progress = progress;
+      // offset.current.x = calcX;
+      // offset.current.progress = progress;
 
       // setP(progress);
       // setCurrentX(calcX);
@@ -169,11 +204,11 @@ function DevToolSlider({
     const handleMouseUp = (e: MouseEvent) => {
       e.preventDefault();
       // const lastX = diffX * steppedProgress;
-      const lastX = Math.floor(diffX * offset.current.progress);
+      // const lastX = Math.floor(diffX * offset.current.prevProgress);
       // console.log("> up: ", offset.current.progress);
 
       // offset.current.lastX = lastX;
-      offset.current.x = lastX;
+      // offset.current.x = lastX;
 
       // setCurrentX(lastX);
       setIsGrabbing(false);
@@ -255,6 +290,8 @@ export type DevToolSliderProps = {
   max?: number;
   /** 움직임 단위 */
   step?: number;
+  /** 정의시 슬라이더를 움직일 기준선을 세운다 */
+  fillOffset?: number;
   /** value */
   value?: number | string;
   /** 변경 시 콜백 */
