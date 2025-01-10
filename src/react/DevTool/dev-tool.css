@@ -1,6 +1,13 @@
 [data-paliga-dev-tool="root"] {
-  z-index: 1000;
   --paliga-color: #f4a524;
+  /* z-index: 1000; */
+  /* position: relative; */
+  /* min-height: 100vh; */
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: visible;
 }
 
 /** progress slider */
@@ -101,11 +108,6 @@
   z-index: 2;
   width: 20px;
   height: 20px;
-  /* border: 2px solid;
-  border-color: var(--paliga-color);
-  border-radius: 9999px; */
-  /* box-sizing: border-box; */
-  /* background-color: #000; */
   cursor: grab;
   position: absolute;
   display: flex;
@@ -125,4 +127,58 @@
 body[data-paliga-dev-tool_slider-grabbing="true"],
 body[data-paliga-dev-tool_slider-grabbing="true"] * {
   cursor: grabbing !important;
+}
+
+/** ===== Scroll Indicator ===== */
+[data-paliga-dev-tool="scroll-indicator__text"] {
+  margin-right: 8px;
+  transform: translateY(-50%);
+  font-size: 0.64rem;
+}
+[data-paliga-dev-tool="scroll-indicator__indicator-container"] {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  height: 0px;
+  overflow: visible;
+}
+[data-paliga-dev-tool="scroll-indicator__indicator"] {
+  height: 1px;
+  width: 40px;
+}
+[data-paliga-dev-tool="scroll-indicator__trigger"] {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 0px;
+  text-align: right;
+  overflow: visible;
+}
+[data-paliga-dev-tool="scroll-indicator__trigger"] [data-paliga-dev-tool="scroll-indicator__text"] {
+  color: #22c55e;
+}
+[data-paliga-dev-tool="scroll-indicator__trigger"]
+  [data-paliga-dev-tool="scroll-indicator__indicator"] {
+  background-color: #22c55e;
+}
+[data-paliga-dev-tool="scroll-indicator__start"],
+[data-paliga-dev-tool="scroll-indicator__end"] {
+  position: absolute;
+  right: 0px;
+  height: 0px;
+  overflow: visible;
+}
+[data-paliga-dev-tool="scroll-indicator__start"] [data-paliga-dev-tool="scroll-indicator__text"] {
+  color: #ef4444;
+}
+[data-paliga-dev-tool="scroll-indicator__start"]
+  [data-paliga-dev-tool="scroll-indicator__indicator"] {
+  background-color: #ef4444;
+}
+[data-paliga-dev-tool="scroll-indicator__end"] [data-paliga-dev-tool="scroll-indicator__text"] {
+  color: #3b82f6;
+}
+[data-paliga-dev-tool="scroll-indicator__end"]
+  [data-paliga-dev-tool="scroll-indicator__indicator"] {
+  background-color: #3b82f6;
 }

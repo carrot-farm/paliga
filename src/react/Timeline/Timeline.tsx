@@ -110,9 +110,7 @@ function Timeline<TTag extends HTMLTag = "div">(
   // # unmount
   useEffect(() => {
     return () => {
-      paliga.current.initialize();
-      paliga.current.initializeObservers();
-      paliga.current.initializeScrollListeners();
+      paliga.current.allInitialize();
     };
   }, []);
 

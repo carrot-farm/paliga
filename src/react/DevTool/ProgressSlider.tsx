@@ -21,6 +21,7 @@ function ProgressSlider({ paligaRef }: { paligaRef: DevToolProps["paligaRef"] })
   const [state, setState] = useState<ReturnType<typeof paligaRef.current.getState>>(() =>
     paligaRef.current.getState(),
   );
+  const displayedProgress = progress < 1 && progress > 0 ? progress.toFixed(2) : progress;
 
   /** 실행 클릭 */
   const handlePlayClick = () => {
@@ -87,22 +88,12 @@ function ProgressSlider({ paligaRef }: { paligaRef: DevToolProps["paligaRef"] })
             min={0}
             max={1}
             step={0.01}
-            value={progress.toFixed(2)}
+            value={displayedProgress}
             onChange={({ value }) => moveProgress(value)}
-
-            // min={-1}
-            // max={1}
-            // step={0.1}
-            // fillOffset={0.2}
-            // value={0.7}
-            // value={progress.toFixed(2)}
-            // onChange={({ value }) => moveProgress(value)}
-            // onChange={console.log}
-            // onChange={() => {}}
           />
         </div>
 
-        <div data-paliga-dev-tool="progress-slider__right">{progress}</div>
+        <div data-paliga-dev-tool="progress-slider__right">{displayedProgress}</div>
       </div>
     </div>
   );

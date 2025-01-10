@@ -1,7 +1,9 @@
 import { CSSProperties } from "react";
 import { getAnimationToStyle } from "../helpers/animationHelpers";
+import { minMax } from "../helpers/mathHelpers";
 import { getSchedule, scheduleRunner } from "../helpers/scheduleHelpers";
-import { getInnerHeight } from "../helpers/styleHelpers";
+import { getInnerY, getScrollTriggerY, getScrollY } from "../helpers/scrollHelpers";
+import { getDistanceFromTop } from "../helpers/styleHelpers";
 import {
   TAnimateOptions,
   TFrameObserver,
@@ -29,6 +31,7 @@ export class Paliga {
   #schedule: TSchedule[] = [];
   #scrollLisners: { root: HTMLElement | Window; listener: () => void }[] = [];
   #intersectionObservers: IntersectionObserver[] = [];
+  #scrollProgressOptions: TScrollProgressOptions = {};
 
   constructor() {}
 
@@ -141,7 +144,10 @@ export class Paliga {
     onAnimationEnd,
     ...options
   }: TIntersectionPlayOptions = {}) {
+    const instance = this;
+
     this.#controlType = "intersectionPlay";
+
     this.#eachSchedule((schedule, i) => {
       const { element } = schedule;
       const newOption = typeof eachOptions === "function" ? eachOptions(schedule, i) : options;
@@ -155,14 +161,31 @@ export class Paliga {
           return;
         }
 
-        this.#scheduleRunner({
-          schedule,
+        scheduleRunner({
+          startProgress: 0,
+          endProgress: 1,
+          scheduleList: [schedule],
+          onFrame: (data) => {
+            // # 옵저버 실행
+            if (instance.#frameObservers.length > 0) {
+              instance.runFrameObserver({ ...data, state: instance.#state });
+            }
+          },
           onAnimationEnd: () => {
             if (typeof onAnimationEnd === "function") {
               onAnimationEnd({ index: i, schedule, entries, observer });
             }
           },
         });
+
+        // this.#scheduleRunner({
+        //   schedule,
+        //   onAnimationEnd: () => {
+        //     if (typeof onAnimationEnd === "function") {
+        //       onAnimationEnd({ index: i, schedule, entries, observer });
+        //     }
+        //   },
+        // });
 
         if (typeof onIntersecting === "function") {
           onIntersecting({ index: i, schedule, entries, observer });
@@ -197,41 +220,36 @@ export class Paliga {
     root,
   }: TScrollProgressOptions = {}) {
     this.#controlType = "scrollProgress";
+    this.#scrollProgressOptions = {
+      trigger,
+      startY,
+      endY,
+      duration,
+      root,
+    };
+
     if (this.#schedule.length === 0) {
       return;
     }
 
-    const getScrollY = (el: HTMLElement | Window) =>
-      "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
-    const limitRange = (num: number) => Math.max(Math.min(num, 1), 0);
     const newRoot = root ?? window;
-    const scrollY = getScrollY(newRoot);
+    const rootInnerY = newRoot instanceof Element ? getInnerY(newRoot) : 0;
     const scheduleLen = this.#schedule.length;
-    const { y: rootY } =
-      "getBoundingClientRect" in newRoot ? newRoot.getBoundingClientRect() : { y: 0 };
-    const rootBorderWidth =
-      newRoot instanceof Element
-        ? parseInt(newRoot.computedStyleMap().get("border-width")?.toString() ?? "0", 10)
-        : 0;
-    const rootPaddingTop =
-      newRoot instanceof Element
-        ? parseInt(newRoot.computedStyleMap().get("padding-top")?.toString() ?? "0", 10)
-        : 0;
-    const { y: firstY } = this.#schedule[0].animations[0].element.getBoundingClientRect();
-    const baseY = firstY - rootY - rootBorderWidth - rootPaddingTop;
+    const scrollY = getScrollY(newRoot);
+    const firstEl = this.#schedule[0].animations[0].element;
+    const firstY = getDistanceFromTop(firstEl);
+    const baseY = firstY - rootInnerY;
     const newStartY = baseY + startY;
     const newEnd = baseY + endY;
-    const rootInnerHeight =
-      newRoot instanceof Element ? getInnerHeight(newRoot) : newRoot.innerHeight;
-    const newTrigger =
-      typeof trigger === "string"
-        ? Math.round((rootInnerHeight * parseInt(trigger, 10)) / 100)
-        : trigger;
+    const newTrigger = getScrollTriggerY({
+      scrollTrigger: trigger,
+      containerEl: newRoot instanceof Element ? newRoot : undefined,
+    });
     const throttle = timeoutFn("throttle");
     let state = "idle";
-    let prevProgress = limitRange((scrollY - startY) / (endY - startY));
+    let prevProgress = minMax((scrollY - startY) / (endY - startY), 0, 1);
 
-    /** 스크롤 실행 시 애니메이션 실행 */
+    /** 스크롤 실행 시 애니메이션 실행  */
     const scrollRunner = ({
       startProgress,
       endProgress,
@@ -256,7 +274,7 @@ export class Paliga {
           }
 
           const currentScrollY = getScrollY(newRoot);
-          const currentProgress = limitRange((newTrigger + currentScrollY - newStartY) / diff);
+          const currentProgress = minMax((newTrigger + currentScrollY - newStartY) / diff, 0, 1);
           prevProgress = endProgress;
 
           if (endProgress !== currentProgress) {
@@ -289,7 +307,7 @@ export class Paliga {
       throttle(() => {
         const newScrollY = getScrollY(newRoot);
         const diff = newEnd - newStartY;
-        const progress = limitRange((newTrigger + newScrollY - newStartY) / diff);
+        const progress = minMax((newTrigger + newScrollY - newStartY) / diff, 0, 1);
         // console.log("> p: ", prevProgress.toFixed(2), progress.toFixed(2));
 
         scrollRunner({
@@ -488,6 +506,8 @@ export class Paliga {
   /** 초기화 */
   initialize() {
     this.#totalDuration = 0;
+    this.#playOptions = {};
+    this.#scrollProgressOptions = {};
     this.#animates = [];
     this.#segments = [];
     this.#schedule = [];
@@ -499,11 +519,8 @@ export class Paliga {
     this.initializeObservers();
     this.initializeFrameObservers();
     this.initializeScrollListeners();
+    this.initialize();
 
-    this.#totalDuration = 0;
-    this.#animates = [];
-    this.#segments = [];
-    this.#schedule = [];
     return this;
   }
 
@@ -516,11 +533,13 @@ export class Paliga {
     });
 
     this.#intersectionObservers = [];
+    return this;
   }
 
   /** 프레임 옵저버 초기화 */
   initializeFrameObservers() {
     this.#frameObservers = [];
+    return this;
   }
 
   /** 스크롤 리스너 초기화 */
@@ -530,6 +549,7 @@ export class Paliga {
     });
 
     this.#scrollLisners = [];
+    return this;
   }
 
   /** 스케쥴 반환 */
@@ -560,6 +580,11 @@ export class Paliga {
   /** 컨트롤 타입 반환 */
   getControlType() {
     return this.#controlType;
+  }
+
+  /** scrollProgress 의 옵션 */
+  getScrollProgressOptions() {
+    return { ...(this.#scrollProgressOptions ?? {}) };
   }
 
   /** 스케쥴 엘리먼트 순회 */

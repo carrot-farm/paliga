@@ -1,11 +1,19 @@
 export const getInnerHeight = (el: HTMLElement) => {
-  const { height } = el.getBoundingClientRect();
+  const height = el.clientHeight;
   const pt = parseInt(el.computedStyleMap().get("padding-top")?.toString() ?? "0", 10);
   const pb = parseInt(el.computedStyleMap().get("padding-bottom")?.toString() ?? "0", 10);
-  const borderWidth = parseInt(el.computedStyleMap().get("border-width")?.toString() ?? "0", 10);
-  const innerHeight = height - pt - pb - borderWidth * 2;
+  const borderWidth =
+    parseInt(el.computedStyleMap().get("border-width")?.toString() ?? "0", 10) * 2;
+  const innerHeight = height - pt - pb - borderWidth;
 
   return innerHeight;
+};
+
+/** 엘리먼트 혹은 window의 상단 으로부터 얼마나 떨어져 있는지 반환 */
+export const getDistanceFromTop = (el: HTMLElement) => {
+  const rect = el.getBoundingClientRect();
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  return rect.top + scrollTop;
 };
 
 /** hex 코드일 경우 true 반환 */
