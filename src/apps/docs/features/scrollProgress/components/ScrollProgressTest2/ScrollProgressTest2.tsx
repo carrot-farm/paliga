@@ -11,16 +11,19 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
   const box3 = useRef<HTMLDivElement>(null);
   const box4 = useRef<HTMLDivElement>(null);
   const box5 = useRef<HTMLDivElement>(null);
+  const box6 = useRef<HTMLDivElement>(null);
   const containerRef1 = useRef<HTMLDivElement>(null);
   const containerRef2 = useRef<HTMLDivElement>(null);
   const containerRef3 = useRef<HTMLDivElement>(null);
   const containerRef4 = useRef<HTMLDivElement>(null);
   const containerRef5 = useRef<HTMLDivElement>(null);
+  const containerRef6 = useRef<HTMLDivElement>(null);
   const { paliga } = usePaliga();
   const { paliga: paliga2 } = usePaliga();
   const { paliga: paliga3 } = usePaliga();
   const { paliga: paliga4 } = usePaliga();
   const { paliga: paliga5 } = usePaliga();
+  const { paliga: paliga6 } = usePaliga();
   const [, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -99,12 +102,29 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
         });
     }
 
+    if (box6.current && containerRef6.current) {
+      paliga6
+        .timeline([box6.current], {
+          x: 200,
+          rotate: 360,
+          scale: 2,
+        })
+        .scrollProgress({
+          trigger: "20%",
+          startY: 0,
+          endY: 100,
+          duration: 800,
+          pin: true,
+          root: containerRef6.current,
+        });
+    }
+
     setIsReady(true);
   }, []);
 
   return (
     <div className={cn("flex flex-col gap-y-4", className)}>
-      <TestSection
+      {/* <TestSection
         title="trigger: number | string"
         titleLink="scroll-progress1-0"
         description="애니메이션의 구간의 교차 기준 지점"
@@ -177,6 +197,25 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
       >
         <div className="h-[120px]"></div>
         <TestSection.Box ref={box5} />
+        <div className="h-[400px]"></div>
+      </TestSection> */}
+
+      <TestSection
+        title="pin"
+        titleLink="scroll-progress1-5"
+        description="구간동안 엘리먼트를 고정"
+        scrollTrigger={"20%"}
+        scrollStart={0}
+        scrollEnd={100}
+        scrollTargetEl={box6.current}
+        hideController
+        classNames={{
+          container: "h-[240px] overflow-y-auto overflow-x-hidden",
+        }}
+        containerRef={containerRef6}
+      >
+        <div className="h-[100px]"></div>
+        <TestSection.Box ref={box6} />
         <div className="h-[400px]"></div>
       </TestSection>
     </div>

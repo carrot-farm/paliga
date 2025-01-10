@@ -2,7 +2,12 @@ import { CSSProperties } from "react";
 import { getAnimationToStyle } from "../helpers/animationHelpers";
 import { minMax } from "../helpers/mathHelpers";
 import { getSchedule, scheduleRunner } from "../helpers/scheduleHelpers";
-import { getInnerY, getScrollTriggerY, getScrollY } from "../helpers/scrollHelpers";
+import {
+  elementTriggerPosition,
+  getInnerY,
+  getScrollTriggerY,
+  getScrollY,
+} from "../helpers/scrollHelpers";
 import { getDistanceFromTop } from "../helpers/styleHelpers";
 import {
   TAnimateOptions,
@@ -217,6 +222,7 @@ export class Paliga {
     startY = 0,
     endY = 0,
     duration = 300,
+    pin,
     root,
   }: TScrollProgressOptions = {}) {
     this.#controlType = "scrollProgress";
@@ -225,6 +231,7 @@ export class Paliga {
       startY,
       endY,
       duration,
+      pin,
       root,
     };
 
@@ -246,8 +253,12 @@ export class Paliga {
       containerEl: newRoot instanceof Element ? newRoot : undefined,
     });
     const throttle = timeoutFn("throttle");
+    const debounce = timeoutFn("debounce");
     let state = "idle";
+    let triggerState: "ready" | "enter" | "leave" = "ready";
     let prevProgress = minMax((scrollY - startY) / (endY - startY), 0, 1);
+
+    // console.log("> ", rootInnerY, firstY, newTrigger, startY);
 
     /** 스크롤 실행 시 애니메이션 실행  */
     const scrollRunner = ({
@@ -298,18 +309,51 @@ export class Paliga {
 
     /** 스크롤 이벤트 */
     const handleScroll = () => {
+      const newScrollY = getScrollY(newRoot);
+      const diff = newEnd - newStartY;
+      const triggerY = newScrollY + newTrigger;
+
+      // # ready
+      if (triggerY < newStartY) {
+        if (triggerState !== "ready") {
+          triggerState = "ready";
+          elementTriggerPosition.router({
+            state: triggerState,
+            schedule: this.#schedule,
+          });
+        }
+      }
+
+      // # enter
+      if (triggerY >= newStartY && triggerY < newEnd) {
+        if (triggerState !== "enter") {
+          triggerState = "enter";
+          elementTriggerPosition.router({
+            state: triggerState,
+            top: newTrigger + rootInnerY,
+            schedule: this.#schedule,
+          });
+        }
+      }
+
+      // # leave
+      if (triggerY >= newEnd && triggerState !== "leave") {
+        triggerState = "leave";
+        elementTriggerPosition.router({
+          state: triggerState,
+          top: newEnd,
+          schedule: this.#schedule,
+        });
+      }
+
       if (state === "running") {
         return;
       }
 
       state = "running";
 
-      throttle(() => {
-        const newScrollY = getScrollY(newRoot);
-        const diff = newEnd - newStartY;
-        const progress = minMax((newTrigger + newScrollY - newStartY) / diff, 0, 1);
-        // console.log("> p: ", prevProgress.toFixed(2), progress.toFixed(2));
-
+      debounce(() => {
+        const progress = minMax((triggerY - newStartY) / diff, 0, 1);
         scrollRunner({
           startProgress: prevProgress,
           endProgress: progress,

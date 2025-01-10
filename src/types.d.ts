@@ -54,6 +54,8 @@ export type TScrollProgressOptions = {
   endY?: number;
   /** 애니메이션 기간 */
   duration?: number;
+  /** true일 경우 엘리먼트를 고정 */
+  pin?: boolean;
   /** 스크롤의 기준이 되는 루트 엘리먼트(default: window) */
   root?: HTMLElement;
 };

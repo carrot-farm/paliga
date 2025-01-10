@@ -12,6 +12,7 @@ import {
 } from "react";
 import { IoCodeSlashSharp } from "react-icons/io5";
 import { Paliga } from "../../../../../../core/Paliga";
+import { getScrollTriggerY } from "../../../../../../helpers/scrollHelpers";
 import TestSectionCode from "./TestSectionCode";
 import TestSectionController from "./TestSectionController";
 
@@ -65,22 +66,10 @@ function TestSection({
     if (!innerContainerRef.current || !scrollTrigger || !containerRef?.current) {
       return;
     }
-    const { height } = containerRef.current.getBoundingClientRect();
-    const pt = parseInt(
-      containerRef.current.computedStyleMap().get("padding-top")?.toString() ?? "0",
-      10,
-    );
-    const pb = parseInt(
-      containerRef.current.computedStyleMap().get("padding-bottom")?.toString() ?? "0",
-      10,
-    );
-    const borderWidth = parseInt(
-      containerRef.current.computedStyleMap().get("border-width")?.toString() ?? "0",
-      10,
-    );
-    const innerHeight = height - pt - pb - borderWidth * 2;
-    const scrollTriggerNum = parseInt(scrollTrigger, 10);
-    const newScrollTrigger = Math.round((innerHeight * scrollTriggerNum) / 100);
+    const newScrollTrigger = getScrollTriggerY({
+      scrollTrigger,
+      containerEl: containerRef.current,
+    });
 
     setNewScrollTrigger(newScrollTrigger);
   }, [scrollTrigger]);
