@@ -124,7 +124,7 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
 
   return (
     <div className={cn("flex flex-col gap-y-4", className)}>
-      {/* <TestSection
+      <TestSection
         title="trigger: number | string"
         titleLink="scroll-progress1-0"
         description="애니메이션의 구간의 교차 기준 지점"
@@ -198,7 +198,7 @@ function ScrollProgressTest2({ className }: ScrollProgressTest2Props) {
         <div className="h-[120px]"></div>
         <TestSection.Box ref={box5} />
         <div className="h-[400px]"></div>
-      </TestSection> */}
+      </TestSection>
 
       <TestSection
         title="pin"

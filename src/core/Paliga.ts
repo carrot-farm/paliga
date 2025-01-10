@@ -3,18 +3,19 @@ import { getAnimationToStyle } from "../helpers/animationHelpers";
 import { minMax } from "../helpers/mathHelpers";
 import { getSchedule, scheduleRunner } from "../helpers/scheduleHelpers";
 import {
-  elementTriggerPosition,
+  elementTriggerPinPosition,
   getInnerY,
   getScrollTriggerY,
   getScrollY,
 } from "../helpers/scrollHelpers";
-import { getDistanceFromTop } from "../helpers/styleHelpers";
+import { findParent, getDistanceFromTop } from "../helpers/styleHelpers";
 import {
   TAnimateOptions,
   TFrameObserver,
   TIntersectionPlayOptions,
   TPlayOptions,
   TSchedule,
+  TScrollProgressData,
   TScrollProgressOptions,
   TSegment,
   TTransition,
@@ -37,6 +38,11 @@ export class Paliga {
   #scrollLisners: { root: HTMLElement | Window; listener: () => void }[] = [];
   #intersectionObservers: IntersectionObserver[] = [];
   #scrollProgressOptions: TScrollProgressOptions = {};
+  #scrollProgressData: TScrollProgressData = {
+    triggerY: 0,
+    startY: 0,
+    endY: 0,
+  };
 
   constructor() {}
 
@@ -183,15 +189,6 @@ export class Paliga {
           },
         });
 
-        // this.#scheduleRunner({
-        //   schedule,
-        //   onAnimationEnd: () => {
-        //     if (typeof onAnimationEnd === "function") {
-        //       onAnimationEnd({ index: i, schedule, entries, observer });
-        //     }
-        //   },
-        // });
-
         if (typeof onIntersecting === "function") {
           onIntersecting({ index: i, schedule, entries, observer });
         }
@@ -224,6 +221,9 @@ export class Paliga {
     duration = 300,
     pin,
     root,
+    onTriggerReady,
+    onTriggerEnter,
+    onTriggerLeave,
   }: TScrollProgressOptions = {}) {
     this.#controlType = "scrollProgress";
     this.#scrollProgressOptions = {
@@ -239,26 +239,30 @@ export class Paliga {
       return;
     }
 
+    const firstEl = this.#schedule[0].element;
+    const parent = findParent(firstEl, (el) => getComputedStyle(el).position === "relative");
+    const parentOffsetY = parent ? getInnerY(parent) : 0;
     const newRoot = root ?? window;
     const rootInnerY = newRoot instanceof Element ? getInnerY(newRoot) : 0;
     const scheduleLen = this.#schedule.length;
     const scrollY = getScrollY(newRoot);
-    const firstEl = this.#schedule[0].animations[0].element;
     const firstY = getDistanceFromTop(firstEl);
-    const baseY = firstY - rootInnerY;
+    const baseY = firstY;
     const newStartY = baseY + startY;
     const newEnd = baseY + endY;
     const newTrigger = getScrollTriggerY({
       scrollTrigger: trigger,
       containerEl: newRoot instanceof Element ? newRoot : undefined,
     });
-    const throttle = timeoutFn("throttle");
     const debounce = timeoutFn("debounce");
     let state = "idle";
-    let triggerState: "ready" | "enter" | "leave" = "ready";
+    let triggerState: "ready" | "enter" | "leave" | undefined;
     let prevProgress = minMax((scrollY - startY) / (endY - startY), 0, 1);
 
-    // console.log("> ", rootInnerY, firstY, newTrigger, startY);
+    this.#scrollProgressData.triggerY = newTrigger;
+    this.#scrollProgressData.startY = newStartY;
+    this.#scrollProgressData.endY = newEnd;
+    // console.log("> ", firstY, newTrigger, newStartY, parentOffsetY);
 
     /** 스크롤 실행 시 애니메이션 실행  */
     const scrollRunner = ({
@@ -314,36 +318,51 @@ export class Paliga {
       const triggerY = newScrollY + newTrigger;
 
       // # ready
-      if (triggerY < newStartY) {
-        if (triggerState !== "ready") {
-          triggerState = "ready";
-          elementTriggerPosition.router({
+      if (triggerY < newStartY && triggerState !== "ready") {
+        triggerState = "ready";
+        console.log("> ready: ");
+        if (pin) {
+          elementTriggerPinPosition.router({
             state: triggerState,
             schedule: this.#schedule,
           });
         }
+        if (onTriggerReady) {
+          onTriggerReady({ schedule: this.#schedule });
+        }
       }
 
       // # enter
-      if (triggerY >= newStartY && triggerY < newEnd) {
-        if (triggerState !== "enter") {
-          triggerState = "enter";
-          elementTriggerPosition.router({
+      if (triggerY >= newStartY && triggerY < newEnd && triggerState !== "enter") {
+        triggerState = "enter";
+        console.log("> enter: ");
+        if (pin) {
+          elementTriggerPinPosition.router({
             state: triggerState,
             top: newTrigger + rootInnerY,
             schedule: this.#schedule,
           });
+        }
+        if (onTriggerEnter) {
+          onTriggerEnter({ schedule: this.#schedule });
         }
       }
 
       // # leave
       if (triggerY >= newEnd && triggerState !== "leave") {
         triggerState = "leave";
-        elementTriggerPosition.router({
-          state: triggerState,
-          top: newEnd,
-          schedule: this.#schedule,
-        });
+        // 573 ~ 973, 637 ~ 1037
+        console.log("> leave: ", newEnd, newStartY, baseY);
+        if (pin) {
+          elementTriggerPinPosition.router({
+            state: triggerState,
+            top: newEnd - parentOffsetY,
+            schedule: this.#schedule,
+          });
+        }
+        if (onTriggerLeave) {
+          onTriggerLeave({ schedule: this.#schedule });
+        }
       }
 
       if (state === "running") {
@@ -629,6 +648,11 @@ export class Paliga {
   /** scrollProgress 의 옵션 */
   getScrollProgressOptions() {
     return { ...(this.#scrollProgressOptions ?? {}) };
+  }
+
+  /** scrollProgress 의 데이터 */
+  geTScrollProgressData() {
+    return { ...this.#scrollProgressData };
   }
 
   /** 스케쥴 엘리먼트 순회 */

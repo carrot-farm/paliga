@@ -1,10 +1,10 @@
 export const getInnerHeight = (el: HTMLElement) => {
   const height = el.clientHeight;
-  const pt = parseInt(el.computedStyleMap().get("padding-top")?.toString() ?? "0", 10);
-  const pb = parseInt(el.computedStyleMap().get("padding-bottom")?.toString() ?? "0", 10);
-  const borderWidth =
-    parseInt(el.computedStyleMap().get("border-width")?.toString() ?? "0", 10) * 2;
-  const innerHeight = height - pt - pb - borderWidth;
+  const { paddingTop, paddingBottom, borderWidth } = window.getComputedStyle(el);
+  const pt = parseInt(paddingTop, 10);
+  const pb = parseInt(paddingBottom, 10);
+  const newBorderWidth = parseInt(borderWidth, 10) * 2;
+  const innerHeight = height - pt - pb - newBorderWidth;
 
   return innerHeight;
 };
@@ -14,6 +14,18 @@ export const getDistanceFromTop = (el: HTMLElement) => {
   const rect = el.getBoundingClientRect();
   const scrollTop = window.scrollY || document.documentElement.scrollTop;
   return rect.top + scrollTop;
+};
+
+/** 조건을 만족하는 부모 요소를 찾는다 */
+export const findParent = (el: HTMLElement, f: (el: HTMLElement) => boolean) => {
+  let newEl = el;
+
+  while (newEl.parentElement) {
+    newEl = newEl.parentElement;
+    if (f(newEl) === true) {
+      return newEl;
+    }
+  }
 };
 
 /** hex 코드일 경우 true 반환 */

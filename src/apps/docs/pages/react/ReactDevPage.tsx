@@ -13,15 +13,17 @@ function ReactDevPage({}: ReactDeugrops) {
         className="h-10 w-10 rounded-md bg-warning"
         isDevTool
         isScrollProgress
-        timeline={[{ x: 200 }, { y: 200 }, { x: -100 }]}
+        timeline={[{ x: 200 }, { x: 50 }, { x: -100 }]}
         scrollProgressOptions={{
           trigger: "50%",
           startY: 0,
           endY: 400,
           duration: 1000,
+          pin: true,
         }}
         paligaRef={paliga}
       />
+
       <div style={{ height: "100vh" }}></div>
     </div>
   );

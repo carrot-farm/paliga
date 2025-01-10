@@ -15,10 +15,16 @@ export const getScrollTriggerY = ({
 
   if (containerEl) {
     const innerHeight = getInnerHeight(containerEl);
+    // const innerY = getInnerY(containerEl);
+    // console.log("> ", innerHeight, innerY, scrollTriggerNum);
+
     const result =
       type === "percent" ? Math.round((innerHeight * scrollTriggerNum) / 100) : scrollTriggerNum;
+    // type === "percent" ? Math.round((innerY * scrollTriggerNum) / 100) : scrollTriggerNum;
     return result;
   }
+
+  // console.log(">>> ", window.innerHeight, scrollTriggerNum);
 
   const result =
     type === "percent"
@@ -31,35 +37,39 @@ export const getScrollTriggerY = ({
 export const getScrollY = (el: HTMLElement | Window) =>
   "scrollY" in el ? el.scrollY : "scrollTop" in el ? el.scrollTop : 0;
 
-/** 엘리먼트의 내부 Y 값 반환(padding-top, border 를 제외) */
+/** 엘리먼트의 내부 Y 값 반환 */
 export const getInnerY = (el: HTMLElement) => {
   const y = getDistanceFromTop(el);
-  const styleMap = el.computedStyleMap();
-  const pt = parseInt(styleMap.get("padding-top")?.toString() ?? "0", 10);
-  const borderWidth = parseInt(styleMap.get("border-width")?.toString() ?? "0", 10);
+  const { paddingTop, borderWidth } = window.getComputedStyle(el);
+  const pt = parseInt(paddingTop, 10);
+  const newBorderWidth = parseInt(borderWidth, 10);
 
-  // console.log("> ", pt, borderWidth);
-  return y + pt + borderWidth;
+  return y + pt + newBorderWidth;
 };
 
 /** 트리거의 상태별 스엘리먼트의 포지션 */
-export const elementTriggerPosition = {
+export const elementTriggerPinPosition = {
   ready: (schedule: TSchedule[], top: number) => {
-    schedule.forEach((sequence) => {
-      sequence.element.style.position = "";
-      sequence.element.style.top = "";
+    schedule.forEach(({ element }) => {
+      element.style.position = "";
+      element.style.top = "";
     });
   },
   enter: (schedule: TSchedule[], top: number) => {
-    schedule.forEach((sequence) => {
-      sequence.element.style.position = "fixed";
-      sequence.element.style.top = `${top}px`;
+    schedule.forEach(({ element }) => {
+      element.style.position = "fixed";
+      element.style.top = `${top}px`;
     });
   },
   leave: (schedule: TSchedule[], top: number) => {
-    schedule.forEach((sequence) => {
-      sequence.element.style.position = "absolute";
-      sequence.element.style.top = `${top}px`;
+    schedule.forEach(({ element }) => {
+      // const y = getDistanceFromTop(element);
+      // const parentY = element.parentElement ? getDistanceFromTop(element.parentElement) : 0;
+      // const newY = top - parentY;
+      // console.log("> end: ", top, y, parentY);
+
+      element.style.position = "absolute";
+      element.style.top = `${top}px`;
     });
   },
   router({

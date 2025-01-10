@@ -58,6 +58,22 @@ export type TScrollProgressOptions = {
   pin?: boolean;
   /** 스크롤의 기준이 되는 루트 엘리먼트(default: window) */
   root?: HTMLElement;
+  /** 트리거가 범위내 히트하지 않았을 경우 */
+  onTriggerReady?: (data: { schedule: TSchedule[] }) => void;
+  /** 트리거가 start 히트할 경우 */
+  onTriggerEnter?: (data: { schedule: TSchedule[] }) => void;
+  /** 트리거가 범위를 벗어날 경우 */
+  onTriggerLeave?: (data: { schedule: TSchedule[] }) => void;
+};
+
+/** 계산된 scrollProgress 정보 */
+export type TScrollProgressData = {
+  /** 트리거의 위치 */
+  triggerY: number;
+  /** 시작 위치 */
+  startY: number;
+  /** 종료 위치 */
+  endY: number;
 };
 
 /** each 속성 호출 시 전달받는 인자 */

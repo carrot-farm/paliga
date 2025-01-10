@@ -1,6 +1,4 @@
 "use client";
-import { getScrollTriggerY } from "../../helpers/scrollHelpers";
-import { getDistanceFromTop } from "../../helpers/styleHelpers";
 import { ScrollIndicator } from "../ScrollIndicator";
 import { DevToolProps } from "./DevTool";
 
@@ -10,22 +8,16 @@ function DevToolScrollIndicator({ paligaRef }: DevToolScrollIndicatorProps) {
   if (!schedule || schedule.length === 0) {
     return null;
   }
-  const options = paligaRef.current.getScrollProgressOptions();
-  const { startY, endY, root } = options;
-  const rootY = root instanceof Element ? getDistanceFromTop(root) : 0;
-  const firstEl = schedule[0].element;
-  const firstElY = getDistanceFromTop(firstEl);
-  const trigger = getScrollTriggerY({
-    scrollTrigger: options.trigger ?? 0,
-    containerEl: root,
-  });
-  const baseY = firstElY - rootY;
-  const start = startY ? baseY + startY : baseY;
-  const end = endY ? baseY + endY : baseY;
+  const { root } = paligaRef.current.getScrollProgressOptions();
+  const { triggerY, startY, endY } = paligaRef.current.geTScrollProgressData();
+  // const newStartY = baseY + start;
+  // const end = baseY + end;
+
+  console.log("> ", triggerY);
 
   return (
     <>
-      <ScrollIndicator trigger={trigger} start={start} end={end} />
+      <ScrollIndicator trigger={triggerY} start={startY} end={endY} />
     </>
   );
 }

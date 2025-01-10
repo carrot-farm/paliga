@@ -2808,6 +2808,16 @@ code[class*="language-tsx"] {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 
+.bg-red-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
+}
+
+.bg-red-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(153 27 27 / var(--tw-bg-opacity, 1));
+}
+
 .bg-stripe-gradient-danger {
   background-image: linear-gradient(45deg,  hsl(var(--nextui-danger-200)) 25%,  hsl(var(--nextui-danger)) 25%,  hsl(var(--nextui-danger)) 50%,  hsl(var(--nextui-danger-200)) 50%,  hsl(var(--nextui-danger-200)) 75%,  hsl(var(--nextui-danger)) 75%,  hsl(var(--nextui-danger)));
 }
