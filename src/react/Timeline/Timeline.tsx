@@ -93,9 +93,10 @@ function Timeline<TTag extends HTMLTag = "div">(
     if (!paliga.current || !isScrollProgress || isScrollProgressReady) {
       return;
     }
+    const { root, ...others } = scrollProgressOptions ?? {};
 
     paliga.current.initializeScrollListeners();
-    paliga.current.scrollProgress(scrollProgressOptions);
+    paliga.current.scrollProgress({ ...others, root: root?.current ?? undefined });
     setIsScrollProgressReady(true);
   }, [isScrollProgress, isScrollProgressReady, scrollProgressOptions]);
 
@@ -143,7 +144,10 @@ export type TimelineProps<TTag extends HTMLTag> = {
   /** intersectionPlay 옵션 */
   intersectionPlayOptions?: TIntersectionPlayOptions;
   /** scrollProgress 옵션 */
-  scrollProgressOptions?: TScrollProgressOptions;
+  scrollProgressOptions?: { root?: MutableRefObject<HTMLElement | null> } & Omit<
+    TScrollProgressOptions,
+    "root"
+  >;
   /** timeline 적용 */
   timeline?: TAnimateOptions[];
   /** paliga instance */

@@ -12,7 +12,6 @@ function TimelineProps({}: TimelinePropsProps) {
   const { paliga } = usePaliga();
   const { paliga: paliga2 } = usePaliga();
   const [isReady, setIsReady] = useState(false);
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     setIsReady(true);
@@ -116,8 +115,8 @@ function TimelineProps({}: TimelinePropsProps) {
         titleLink="react-props-scrollProgress-0"
         description="스크롤의 위치에 따라 애니메이션의 진행 변화"
         scrollTrigger={"20%"}
-        scrollStart={-100}
-        scrollEnd={80}
+        scrollStart={0}
+        scrollEnd={120}
         hideController
         classNames={{ container: "max-h-[320px] overflow-y-auto" }}
         scrollTargetEl={box1Ref.current}
@@ -131,10 +130,10 @@ function TimelineProps({}: TimelinePropsProps) {
             isReady
               ? {
                   trigger: "20%",
-                  startY: -100,
-                  endY: 80,
-                  duration: 400,
-                  root: containerRef.current as HTMLElement,
+                  startY: 0,
+                  endY: 120,
+                  pin: true,
+                  root: containerRef as any,
                 }
               : undefined
           }
@@ -144,10 +143,8 @@ function TimelineProps({}: TimelinePropsProps) {
           <div className="h-10 w-10 rounded-md bg-warning"></div>
           <span className="text-[0.65rem]"></span>
         </Timeline>
-        <div className="h-[250px]"> </div>
+        <div className="h-[400px]"> </div>
       </TestSection>
-
-      <button onClick={() => setCount(count + 1)}> {count}</button>
     </div>
   );
 }

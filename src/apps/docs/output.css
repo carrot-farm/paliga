@@ -1210,6 +1210,10 @@ code[class*="language-tsx"] {
   height: 50%;
 }
 
+.h-\[500px\] {
+  height: 500px;
+}
+
 .h-\[50px\] {
   height: 50px;
 }
@@ -2700,6 +2704,11 @@ code[class*="language-tsx"] {
   background-color: hsl(var(--nextui-foreground) / 0.1);
 }
 
+.bg-gray-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
+}
+
 .bg-green-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
@@ -2806,16 +2815,6 @@ code[class*="language-tsx"] {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-}
-
-.bg-red-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 242 242 / var(--tw-bg-opacity, 1));
-}
-
-.bg-red-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(153 27 27 / var(--tw-bg-opacity, 1));
 }
 
 .bg-stripe-gradient-danger {

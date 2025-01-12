@@ -244,17 +244,21 @@ export class Paliga {
     const parentOffsetY = parent ? getInnerY(parent) : 0;
     const newRoot = root ?? window;
     const rootInnerY = newRoot instanceof Element ? getInnerY(newRoot) : 0;
+    let rootViewportY = root ? root.getBoundingClientRect().y : 0;
+    const rootPaddingTop = root ? parseInt(getComputedStyle(root).paddingTop, 10) : 0;
     const scheduleLen = this.#schedule.length;
     const scrollY = getScrollY(newRoot);
     const firstY = getDistanceFromTop(firstEl);
-    const baseY = firstY;
+    const baseY = root ? firstY - rootInnerY : firstY;
     const newStartY = baseY + startY;
+    const startOffset = startY * -1;
     const newEnd = baseY + endY;
     const newTrigger = getScrollTriggerY({
       scrollTrigger: trigger,
       containerEl: newRoot instanceof Element ? newRoot : undefined,
     });
     const debounce = timeoutFn("debounce");
+    const vieportDebounce = timeoutFn("debounce");
     let state = "idle";
     let triggerState: "ready" | "enter" | "leave" | undefined;
     let prevProgress = minMax((scrollY - startY) / (endY - startY), 0, 1);
@@ -262,7 +266,11 @@ export class Paliga {
     this.#scrollProgressData.triggerY = newTrigger;
     this.#scrollProgressData.startY = newStartY;
     this.#scrollProgressData.endY = newEnd;
-    // console.log("> ", firstY, newTrigger, newStartY, parentOffsetY);
+
+    // mt 104(64 + 40)
+    // console.log("> ", firstY, newTrigger, parentOffsetY);
+    // console.log("> 0: ", rootViewportY);
+    // return;
 
     /** 스크롤 실행 시 애니메이션 실행  */
     const scrollRunner = ({
@@ -316,11 +324,14 @@ export class Paliga {
       const newScrollY = getScrollY(newRoot);
       const diff = newEnd - newStartY;
       const triggerY = newScrollY + newTrigger;
+      // console.log("> 1: ", newScrollY, triggerY, newStartY);
+
+      // return;
 
       // # ready
       if (triggerY < newStartY && triggerState !== "ready") {
         triggerState = "ready";
-        console.log("> ready: ");
+        // console.log("> ready: ");
         if (pin) {
           elementTriggerPinPosition.router({
             state: triggerState,
@@ -335,11 +346,11 @@ export class Paliga {
       // # enter
       if (triggerY >= newStartY && triggerY < newEnd && triggerState !== "enter") {
         triggerState = "enter";
-        console.log("> enter: ");
+        // console.log("> enter: ", newTrigger);
         if (pin) {
           elementTriggerPinPosition.router({
             state: triggerState,
-            top: newTrigger + rootInnerY,
+            top: root ? newTrigger + startOffset + rootViewportY : newTrigger + startOffset,
             schedule: this.#schedule,
           });
         }
@@ -352,11 +363,13 @@ export class Paliga {
       if (triggerY >= newEnd && triggerState !== "leave") {
         triggerState = "leave";
         // 573 ~ 973, 637 ~ 1037
-        console.log("> leave: ", newEnd, newStartY, baseY);
+        // console.log("> leave: ", newEnd, newStartY, baseY);
         if (pin) {
           elementTriggerPinPosition.router({
             state: triggerState,
-            top: newEnd - parentOffsetY,
+            top: root
+              ? newEnd + startOffset - rootPaddingTop
+              : newEnd - parentOffsetY + startOffset,
             schedule: this.#schedule,
           });
         }
@@ -385,6 +398,17 @@ export class Paliga {
     handleScroll();
     newRoot.addEventListener("scroll", handleScroll);
     this.#scrollLisners.push({ root: newRoot, listener: handleScroll });
+
+    if (root) {
+      /** 컨테이너 내에서 스크롤 시 위치를 보정하기 위함 */
+      const listenViewportY = () => {
+        vieportDebounce(() => {
+          rootViewportY = root?.getBoundingClientRect().y ?? 0;
+        });
+      };
+      window.addEventListener("scroll", listenViewportY);
+      this.#scrollLisners.push({ root: window, listener: listenViewportY });
+    }
   }
 
   /** 애니메이션 중단 */

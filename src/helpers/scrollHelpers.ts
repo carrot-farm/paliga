@@ -12,24 +12,23 @@ export const getScrollTriggerY = ({
   const type = typeof scrollTrigger === "string" && scrollTrigger.endsWith("%") ? "percent" : "px";
   const scrollTriggerNum =
     typeof scrollTrigger === "string" ? parseInt(scrollTrigger, 10) : scrollTrigger;
+  let containerHeight = containerEl ? getInnerHeight(containerEl) : window.innerHeight;
 
-  if (containerEl) {
-    const innerHeight = getInnerHeight(containerEl);
-    // const innerY = getInnerY(containerEl);
-    // console.log("> ", innerHeight, innerY, scrollTriggerNum);
+  // if (containerEl) {
+  //   const innerHeight = getInnerHeight(containerEl);
+  //   // const innerY = getInnerY(containerEl);
 
-    const result =
-      type === "percent" ? Math.round((innerHeight * scrollTriggerNum) / 100) : scrollTriggerNum;
-    // type === "percent" ? Math.round((innerY * scrollTriggerNum) / 100) : scrollTriggerNum;
-    return result;
-  }
+  //   const result =
+  //     type === "percent" ? Math.round((innerHeight * scrollTriggerNum) / 100) : scrollTriggerNum;
+  //   console.log("> ", result);
+  //   // type === "percent" ? Math.round((innerY * scrollTriggerNum) / 100) : scrollTriggerNum;
+  //   return result;
+  // }
 
   // console.log(">>> ", window.innerHeight, scrollTriggerNum);
 
   const result =
-    type === "percent"
-      ? Math.round((window.innerHeight * scrollTriggerNum) / 100)
-      : scrollTriggerNum;
+    type === "percent" ? Math.round((containerHeight * scrollTriggerNum) / 100) : scrollTriggerNum;
   return result;
 };
 
@@ -63,11 +62,6 @@ export const elementTriggerPinPosition = {
   },
   leave: (schedule: TSchedule[], top: number) => {
     schedule.forEach(({ element }) => {
-      // const y = getDistanceFromTop(element);
-      // const parentY = element.parentElement ? getDistanceFromTop(element.parentElement) : 0;
-      // const newY = top - parentY;
-      // console.log("> end: ", top, y, parentY);
-
       element.style.position = "absolute";
       element.style.top = `${top}px`;
     });
