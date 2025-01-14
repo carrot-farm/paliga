@@ -12,11 +12,16 @@
     "url": "git+https://github.com/carrot-farm/paliga.git"
   },
   "author": "chohoki@gmail.com",
+  "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "tsconfig.json",
+    "tsconfig.node.json",
+    "tsconfig.react.json"
   ],
   "exports": {
     ".": {
@@ -25,8 +30,20 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/cjs/index.js"
     },
+    "./paliga": {
+      "default": "./src/index.ts"
+    },
+    "./helpers/*": {
+      "default": "./src/helpers/*"
+    },
     "./dev-tool.css": {
       "default": "./src/react/DevTool/dev-tool.css"
+    },
+    "./react": {
+      "default": "./src/react/index.tsx"
+    },
+    "./types.d.ts": {
+      "default": "./src/types.d.ts"
     }
   },
   "scripts": {
@@ -87,9 +104,6 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
   },
-  "sideEffects": [
-    "**/*.css"
-  ],
   "lint-staged": {
     "*.{ts,tsx,d.ts,js,jsx,css}": "prettier --write"
   },
