@@ -25,14 +25,14 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/cjs/index.js"
     },
+    "./dev-tool.css": {
+      "default": "./src/react/DevTool/dev-tool.css"
+    },
     "./paliga": {
       "default": "./src/index.ts"
     },
     "./helpers/*": {
       "default": "./src/helpers/*"
-    },
-    "./dev-tool.css": {
-      "default": "./src/react/DevTool/dev-tool.css"
     },
     "./react": {
       "default": "./src/react/index.tsx"
@@ -44,7 +44,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:docs tw",
     "dev:docs": "vite --host --mode docs",
-    "build": "tsc -b ./tsconfig.react.json && vite build",
+    "build": "tsc && vite build",
     "prepublishOnly": "npm run build",
     "tw": "npx tailwindcss -i ./src/apps/docs/input.css -o ./src/apps/docs/output.css --watch",
     "vi": "vitest --config vite-vitest.config.ts",

@@ -81,7 +81,11 @@ export const defaultConfig: UserConfig = {
       afterBuild: () => {
         const srcPath = resolve(__dirname, "src/types.d.ts");
         const destPath = resolve(__dirname, "dist/types.d.ts");
+        const srcCss = resolve(__dirname, "src/react/DevTool/dev-tool.css");
+        const destCss = resolve(__dirname, "dist/dev-tool.css");
+
         copyFileSync(srcPath, destPath);
+        copyFileSync(srcCss, destCss);
       },
     }),
     /** tsconfig 파일에서 baseUrl, paths 등을 참조할 수 있도록 설정 */
