@@ -1,5 +1,6 @@
 import swc from "@rollup/plugin-swc";
 import react from "@vitejs/plugin-react-swc";
+import { copyFileSync } from "fs";
 import { glob } from "glob";
 import { extname, relative, resolve } from "path";
 import { fileURLToPath } from "url";
@@ -75,7 +76,13 @@ export const defaultConfig: UserConfig = {
     /** 타입 정의 파일을 생성 */
     dts({
       insertTypesEntry: true,
+      tsconfigPath: resolve(__dirname, "tsconfig.react.json"),
       exclude: ["dist", "node_modules"],
+      afterBuild: () => {
+        const srcPath = resolve(__dirname, "src/types.d.ts");
+        const destPath = resolve(__dirname, "dist/types.d.ts");
+        copyFileSync(srcPath, destPath);
+      },
     }),
     /** tsconfig 파일에서 baseUrl, paths 등을 참조할 수 있도록 설정 */
     tsconfigPaths({ root: "./" }),
