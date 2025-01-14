@@ -1,6 +1,6 @@
 {
   "name": "@paliga/core",
-  "version": "0.0.19",
+  "version": "0.0.17",
   "license": "MIT",
   "private": false,
   "homepage": "https://github.com/carrot-farm/paliga#readme",
@@ -24,12 +24,27 @@
       "import": "./dist/esm/index.js",
       "types": "./dist/index.d.ts",
       "default": "./dist/cjs/index.js"
+    },
+    "./paliga": {
+      "default": "./src/index.ts"
+    },
+    "./helpers/*": {
+      "default": "./src/helpers/*"
+    },
+    "./dev-tool.css": {
+      "default": "./src/react/DevTool/dev-tool.css"
+    },
+    "./react": {
+      "default": "./src/react/index.tsx"
+    },
+    "./types.d.ts": {
+      "default": "./src/types.d.ts"
     }
   },
   "scripts": {
     "dev": "npm-run-all --parallel dev:docs tw",
     "dev:docs": "vite --host --mode docs",
-    "build": "tsc && vite build",
+    "build": "tsc -b ./tsconfig.react.json && vite build",
     "prepublishOnly": "npm run build",
     "tw": "npx tailwindcss -i ./src/apps/docs/input.css -o ./src/apps/docs/output.css --watch",
     "vi": "vitest --config vite-vitest.config.ts",
