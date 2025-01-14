@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @root {
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
+      "Noto Sans",
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol",
+      "Noto Color Emoji";
+  }
+
+  /** scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #686868;
+    border-radius: 10px;
+    padding: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /** prism */
+  code[class*="language-tsx"] {
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+  }
+}

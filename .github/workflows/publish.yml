@@ -1,0 +1,33 @@
+name: NPM Publish
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install
+        run: npm ci
+
+      - name: Setup Git User
+        shell: bash
+        run: |
+          git config --global user.name carrot-farm
+          git config --global user.email chohoki@gmail.com
+
+      # github 에서 release 기능을 사용해 버전을 지정
+      - name: Update version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          sed -i s/${CURRENT_VERSION}/${{ env.NEW_VERSION }}/ package.json
+        env:
+          NEW_VERSION: ${{ github.event.release.tag_name }}
+
+      - name: NPM publish
+        run: cd apps/paliga && npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
