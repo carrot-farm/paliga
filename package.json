@@ -1,23 +1,22 @@
 {
-  "name": "paliga",
-  "version": "0.0.0",
-  "license": "MIT",
+  "name": "@paliga/paliga",
+  "version": "0.0.16",
   "private": true,
-  "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/cjs/index.js"
-    }
+  "description": "",
+  "homepage": "https://github.com/carrot-farm/paliga#readme",
+  "bugs": {
+    "url": "https://github.com/carrot-farm/paliga/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carrot-farm/paliga.git"
+  },
+  "license": "MIT",
+  "author": "chohoki@gmail.com",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -35,6 +34,10 @@
     "prettier-plugin-tailwindcss": "^0.6.9",
     "turbo": "^2.3.3"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "module": "./dist/esm/index.js",
   "lint-staged": {
     "!(packages/**/*)*.{js,jsx,ts,tsx}": [
       "prettier --write",
@@ -47,12 +50,5 @@
       "base -c 'cd ./apps/docs && tsc --noEmit'"
     ]
   },
-  "packageManager": "npm@11.0.0",
-  "engines": {
-    "node": ">=18"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "packageManager": "npm@11.0.0"
 }
