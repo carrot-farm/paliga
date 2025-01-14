@@ -1,8 +1,5 @@
 [data-paliga-dev-tool="root"] {
   --paliga-color: #f4a524;
-  /* z-index: 1000; */
-  /* position: relative; */
-  /* min-height: 100vh; */
   top: 0;
   left: 0;
   width: 0;
@@ -60,6 +57,8 @@
 [data-paliga-dev-tool="progress-slider__progress-wrapper"] {
   position: relative;
   flex: 1;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 [data-paliga-dev-tool="progress-slider__progress"] {
   width: 100%;
@@ -79,9 +78,9 @@
 
 /** ===== 슬라이더 ===== */
 [data-paliga-dev-tool="dev-tool-slider"] {
-  position: "relative";
+  position: relative;
   display: grid;
-  grid-template-columns: 10px 1fr 10px;
+  /* grid-template-columns: minmax(10px, 1fr) 1fr minmax(10px, 1fr); */
 }
 [data-paliga-dev-tool="dev-tool-slider__center-container"] {
   position: relative;
@@ -184,4 +183,261 @@ body[data-paliga-dev-tool_slider-grabbing="true"] * {
 [data-paliga-dev-tool="scroll-indicator__end"]
   [data-paliga-dev-tool="scroll-indicator__indicator"] {
   background-color: #3b82f6;
+}
+
+/** ===== Options Toggle Button ===== */
+[data-paliga-dev-tool="options-toggle-button-container"] {
+  position: fixed;
+  left: 50%;
+  bottom: 80px;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  font-size: 0.8rem;
+  line-height: 1em;
+  text-align: right;
+  height: 0px;
+}
+[data-paliga-dev-tool="options-toggle-button"] {
+  font-size: 1.2rem;
+}
+
+/** ===== Options Panel ===== */
+[data-paliga-dev-tool="options-panel"] {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #fff;
+  width: 320px;
+  /* height: calc(100vh - 90px); */
+  height: calc(100vh);
+  z-index: 1000;
+  border-bottom-left-radius: 8px;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 52px 1fr 52px;
+}
+
+/** animate selector */
+[data-paliga-dev-tool="options-section__animate-selector-container"] {
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  align-items: center;
+  padding-top: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  gap: 8px;
+}
+[data-paliga-dev-tool="options-section__animate-selector-wrapper"] {
+  font-size: 0.75rem;
+  color: #777;
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  gap: 4px;
+}
+[data-paliga-dev-tool="options-section__animate-selector-wrapper"] > button {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: fit-content;
+  aspect-ratio: 3/2;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 4px;
+  border: 1px solid #eaeaea;
+  box-sizing: border-box;
+}
+[data-paliga-dev-tool="options-section__animate-selector-wrapper"] > button.active_selector {
+  background-color: #eee;
+  border-color: #aaa;
+}
+
+/** Options Section */
+[data-paliga-dev-tool="options-section-container"] {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  color: #222;
+}
+[data-paliga-dev-tool="options-section-wrapper"] {
+  border-radius: 8px;
+  border: 1px solid #eaeaea;
+  box-sizing: border-box;
+  padding: 8px;
+}
+[data-paliga-dev-tool="options-section-header"] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+[data-paliga-dev-tool="options-section"] > h3 {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+}
+[data-paliga-dev-tool="options-section"] > h3:nth-of-type(1) {
+  margin-top: 0px;
+}
+[data-paliga-dev-tool="range-root"] {
+  position: relative;
+}
+[data-paliga-dev-tool="range-root"][aria-disabled="true"]::before {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: -100%;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 200%;
+  background-color: rgba(255, 255, 255, 0.3);
+  z-index: 3;
+}
+[data-paliga-dev-tool="range-numbers-container"] {
+  display: flex;
+}
+[data-paliga-dev-tool="range-numbers-container"] > input {
+  background-color: transparent;
+  font-size: 0.8rem;
+  outline: none;
+  height: 1em;
+  max-width: 33.33%;
+}
+[data-paliga-dev-tool="range-value"] {
+  text-align: center;
+}
+[data-paliga-dev-tool="range-max"] {
+  text-align: right;
+}
+
+/* easing */
+[data-paliga-dev-tool="easing-root"] {
+}
+[data-paliga-dev-tool="easing__bezier-container"] {
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+}
+[data-paliga-dev-tool="easing__bezier-container"] > input {
+  width: 25%;
+}
+
+/** label */
+[data-paliga-dev-tool="label"] {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* color picker */
+[data-paliga-dev-tool="color-picker"] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* input */
+[data-paliga-dev-tool="input"] {
+  border: 1px solid;
+  border-color: #eaeaea;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: transparent;
+  outline: none;
+  font-size: 0.8rem;
+  height: 27px;
+  padding-left: 6px;
+  padding-right: 6px;
+  width: fit-content;
+}
+
+/* checkbox */
+[data-paliga-dev-tool="checkbox-item"] {
+  display: flex;
+  gap: 4px;
+}
+[data-paliga-dev-tool="input"][type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 4px;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  cursor: pointer;
+}
+[data-paliga-dev-tool="input"][type="checkbox"]:checked {
+  background-color: var(--paliga-color);
+}
+
+/** select */
+[data-paliga-dev-tool="select"] {
+  background-color: transparent;
+  outline: none;
+  border: 1px solid;
+  border-color: #eaeaea;
+  border-radius: 8px;
+  box-sizing: border-box;
+  height: 27px;
+  font-size: 0.8rem;
+}
+[data-paliga-dev-tool="select"]:disabled {
+  background-color: #eaeaea;
+  border-color: #aaa;
+  color: #555;
+  cursor: not-allowed;
+}
+
+/** Add Button */
+[data-paliga-dev-tool="options-section__add"] {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  height: 36px;
+  text-align: center;
+  border-radius: 8px;
+  transition: background-color 0.2s linear;
+  background-color: #efefef;
+  color: #555;
+  width: 100%;
+}
+[data-paliga-dev-tool="options-section__add"]:hover {
+  background-color: #eaeaea;
+}
+
+/** Footer */
+[data-paliga-dev-tool="options-footer-section"] {
+  height: 52px;
+  padding: 8px;
+  gap: 8px;
+  color: #222;
+  font-size: 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+[data-paliga-dev-tool="options-footer-section"] > button {
+  text-align: center;
+  border-radius: 8px;
+  transition: background-color 0.2s linear;
+}
+[data-paliga-dev-tool="options-footer-section__copy"] {
+  background-color: #f5a524;
+  color: #fff;
+}
+[data-paliga-dev-tool="options-footer-section__copy"]:hover {
+  background-color: #e79817;
 }

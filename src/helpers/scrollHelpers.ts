@@ -14,19 +14,6 @@ export const getScrollTriggerY = ({
     typeof scrollTrigger === "string" ? parseInt(scrollTrigger, 10) : scrollTrigger;
   let containerHeight = containerEl ? getInnerHeight(containerEl) : window.innerHeight;
 
-  // if (containerEl) {
-  //   const innerHeight = getInnerHeight(containerEl);
-  //   // const innerY = getInnerY(containerEl);
-
-  //   const result =
-  //     type === "percent" ? Math.round((innerHeight * scrollTriggerNum) / 100) : scrollTriggerNum;
-  //   console.log("> ", result);
-  //   // type === "percent" ? Math.round((innerY * scrollTriggerNum) / 100) : scrollTriggerNum;
-  //   return result;
-  // }
-
-  // console.log(">>> ", window.innerHeight, scrollTriggerNum);
-
   const result =
     type === "percent" ? Math.round((containerHeight * scrollTriggerNum) / 100) : scrollTriggerNum;
   return result;

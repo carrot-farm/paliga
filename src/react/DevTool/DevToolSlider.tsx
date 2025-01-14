@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { minMax } from "../../helpers/mathHelpers";
 
 /** ===== Components ===== */
@@ -10,6 +10,8 @@ function DevToolSlider({
   step = 1,
   fillOffset = min,
   value,
+  leftContent,
+  rightContent,
   onChange,
 }: DevToolSliderProps) {
   const progressRef = useRef<HTMLDivElement>(null);
@@ -101,6 +103,7 @@ function DevToolSlider({
     }
 
     const progress = getStepProgress({ value: Number(value), min, max, step });
+
     changeProgressBar(progress);
   }, [value, min, max, step]);
 
@@ -147,7 +150,8 @@ function DevToolSlider({
 
   return (
     <div data-paliga-dev-tool="dev-tool-slider" className={className}>
-      <div data-paliga-dev-tool="dev-tool-slider__left-container"></div>
+      <div data-paliga-dev-tool="dev-tool-slider__left-container">{leftContent}</div>
+
       <div data-paliga-dev-tool="dev-tool-slider__center-container">
         {/* progress */}
         <div data-paliga-dev-tool="dev-tool-slider__progress" ref={progressRef}></div>
@@ -165,7 +169,8 @@ function DevToolSlider({
           <div data-paliga-dev-tool="dev-tool-slider__thumb"></div>
         </div>
       </div>
-      <div data-paliga-dev-tool="dev-tool-slider__right-container"></div>
+
+      <div data-paliga-dev-tool="dev-tool-slider__right-container">{rightContent}</div>
     </div>
   );
 }
@@ -209,6 +214,10 @@ export type DevToolSliderProps = {
   fillOffset?: number;
   /** value */
   value?: number | string;
+  /** 왼쪽 렌더링 */
+  leftContent?: ReactNode;
+  /** 오른쪽 렌더링 */
+  rightContent?: ReactNode;
   /** 변경 시 콜백 */
   onChange?: (data: { progress: number; value: number }) => void;
 };

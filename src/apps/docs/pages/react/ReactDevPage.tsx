@@ -1,35 +1,32 @@
 "use client";
-import { Timeline } from "../../../../react";
-import { usePaliga } from "../../../../react/hooks/usePaliga";
+import { Link } from "react-router-dom";
 
 /** ===== Components  ===== */
 function ReactDevPage({}: ReactDeugrops) {
-  // const root = useRef<HTMLDivElement | null>(null);
-  const { paliga } = usePaliga();
-
   return (
-    <div>
-      <div style={{ height: "calc(70vh - 104px)" }}>
-        {/* <div className="relative h-[400px] overflow-y-auto bg-gray-700" ref={root}> */}
-        <div className="h-[500px]"></div>
-        <Timeline
-          className="h-10 w-10 rounded-md bg-warning"
-          isDevTool
-          isScrollProgress
-          timeline={[{ x: 200 }, { x: 50 }, { x: -100 }]}
-          scrollProgressOptions={{
-            trigger: "20%",
-            startY: 0,
-            endY: 200,
-            duration: 1000,
-            pin: true,
-            // root,
-          }}
-          paligaRef={paliga}
-        />
-
-        <div style={{ height: "200vh" }}></div>
-      </div>
+    <div className="flex flex-col gap-y-10">
+      <ul className="flex list-disc flex-col gap-y-5">
+        <li>
+          <Link to="/react/dev/play" className="hover:underline">
+            Play
+          </Link>
+        </li>
+        <li>
+          <Link to="/react/dev/intersectino-play" className="hover:underline">
+            Intersection Play
+          </Link>
+        </li>
+        <li>
+          <Link to="/react/dev/scroll-progress-1" className="hover:underline">
+            Scroll Progress
+          </Link>
+        </li>
+        <li>
+          <Link to="/react/dev/scroll-progress-2" className="hover:underline">
+            Scroll Progress( container )
+          </Link>
+        </li>
+      </ul>
     </div>
   );
 }

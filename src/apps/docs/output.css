@@ -2089,6 +2089,10 @@ code[class*="language-tsx"] {
   row-gap: 1rem;
 }
 
+.gap-y-5 {
+  row-gap: 1.25rem;
+}
+
 .space-x-0\.5 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.125rem * var(--tw-space-x-reverse));

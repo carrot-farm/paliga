@@ -26,6 +26,8 @@ export type TAnimateOptions = {
   beforeStyle?: (index: number) => CSSProperties;
 } & Partial<Omit<TTransition, "id" | "groupId" | "duration">>;
 
+export type TAnimate = { elements: HTMLElement[] } & TAnimateOptions;
+
 /** insersection 옵션 */
 export type TIntersectionPlayOptions = {
   /** 정의 시 엘리먼트 별로 옵션 지정 가능 */
@@ -88,6 +90,10 @@ export type TEachState = Pick<
   | "scaleX"
   | "scaleY"
   | "scaleZ"
+  | "rotate"
+  | "rotateX"
+  | "rotateY"
+  | "rotateZ"
   | "width"
   | "height"
   | "borderWidth"
@@ -96,6 +102,8 @@ export type TEachState = Pick<
 >;
 
 /** ===== 상태 ===== */
+export type TControlType = "play" | "intersectionPlay" | "scrollProgress";
+
 export type TFrameObserver = (
   data: { state: "idle" | "running" | "paused"; progress: number } & Partial<
     Omit<TScheduleRunnerOnParams, "progress">

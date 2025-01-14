@@ -1,5 +1,4 @@
 import { CSSProperties } from "react";
-import { getAnimationToStyle } from "../helpers/animationHelpers";
 import { minMax } from "../helpers/mathHelpers";
 import { getSchedule, scheduleRunner } from "../helpers/scheduleHelpers";
 import {
@@ -10,7 +9,9 @@ import {
 } from "../helpers/scrollHelpers";
 import { findParent, getDistanceFromTop } from "../helpers/styleHelpers";
 import {
+  TAnimate,
   TAnimateOptions,
+  TControlType,
   TFrameObserver,
   TIntersectionPlayOptions,
   TPlayOptions,
@@ -20,22 +21,21 @@ import {
   TSegment,
   TTransition,
 } from "../types";
-import { ApplyStyles } from "./ApplyStyles";
-import { framer } from "./framer";
 import { timeoutFn } from "./timeUtils";
 
 export class Paliga {
   #frameObservers: TFrameObserver[] = [];
-  #controlType: "play" | "intersectionPlay" | "scrollProgress" = "play";
+  #controlType: TControlType = "play";
   #state: "idle" | "running" | "paused" = "idle";
   #progress: number = 0;
   #totalDuration: number = 0;
   #resumeProgress: number | undefined;
-  #playOptions: TPlayOptions = {};
-  #animates: ({ elements: HTMLElement[] } & TAnimateOptions)[] = [];
+  #animates: TAnimate[] = [];
   #segments: TSegment[] = [];
   #schedule: TSchedule[] = [];
   #scrollLisners: { root: HTMLElement | Window; listener: () => void }[] = [];
+  #playOptions: TPlayOptions = {};
+  #intersectionPlayOptions: TIntersectionPlayOptions = {};
   #intersectionObservers: IntersectionObserver[] = [];
   #scrollProgressOptions: TScrollProgressOptions = {};
   #scrollProgressData: TScrollProgressData = {
@@ -158,6 +158,13 @@ export class Paliga {
     const instance = this;
 
     this.#controlType = "intersectionPlay";
+    this.#intersectionPlayOptions = {
+      ...options,
+      eachOptions,
+      onIntersecting,
+      onUnintersecting,
+      onAnimationEnd,
+    };
 
     this.#eachSchedule((schedule, i) => {
       const { element } = schedule;
@@ -594,6 +601,7 @@ export class Paliga {
   initialize() {
     this.#totalDuration = 0;
     this.#playOptions = {};
+    this.#intersectionPlayOptions = {};
     this.#scrollProgressOptions = {};
     this.#animates = [];
     this.#segments = [];
@@ -669,6 +677,16 @@ export class Paliga {
     return this.#controlType;
   }
 
+  /** intersection play options 반환 */
+  getPlayOptions() {
+    return { ...this.#playOptions };
+  }
+
+  /** intersection play options 반환 */
+  getIntersectionPlayOptions() {
+    return { ...this.#intersectionPlayOptions };
+  }
+
   /** scrollProgress 의 옵션 */
   getScrollProgressOptions() {
     return { ...(this.#scrollProgressOptions ?? {}) };
@@ -677,6 +695,26 @@ export class Paliga {
   /** scrollProgress 의 데이터 */
   geTScrollProgressData() {
     return { ...this.#scrollProgressData };
+  }
+
+  /** animate 옵션 반환 */
+  getAnimates() {
+    return [...this.#animates];
+  }
+
+  /** timeline 셋 */
+  setTimeline(timelineOptions: ({ elements?: HTMLElement[] } & Omit<TAnimate, "elements">)[]) {
+    this.#animates = [];
+    this.#segments = [];
+    this.#schedule = [];
+
+    timelineOptions.forEach(({ elements, ...options }) => {
+      if (elements) {
+        this.timeline(elements, options);
+      } else {
+        this.timeline(options);
+      }
+    });
   }
 
   /** 스케쥴 엘리먼트 순회 */
@@ -689,61 +727,5 @@ export class Paliga {
       f(schedule, i);
       i++;
     }
-  }
-
-  /** 단일 스케쥴 실행기 */
-  #scheduleRunner({
-    startProgress = 0,
-    endProgress,
-    schedule,
-    onAnimationEnd,
-  }: {
-    startProgress?: number;
-    endProgress?: number;
-    schedule: TSchedule;
-    onAnimationEnd: (data: { schedule: TSchedule }) => void;
-  }) {
-    const { maxDuration, animations, element } = schedule;
-    let k = 0;
-
-    framer({
-      startProgress,
-      endProgress,
-      duration: maxDuration,
-      onFrame: ({ progress }) => {
-        const animation = animations[k];
-
-        if (!animation) {
-          return;
-        }
-
-        const { animationProgress, x, y, opacity } = getAnimationToStyle({
-          maxDuration,
-          progress,
-          animation,
-        });
-
-        ApplyStyles.router({ el: element, x, y, opacity });
-
-        schedule.progress = progress;
-
-        if (schedule.state === "paused") {
-          return false;
-        }
-
-        // # 다음 스케쥴
-        if (animationProgress >= 1) {
-          k++;
-        }
-      },
-      onDone: () => {
-        schedule.state = "done";
-        schedule.progress = 0;
-
-        if (typeof onAnimationEnd === "function") {
-          onAnimationEnd({ schedule });
-        }
-      },
-    });
   }
 }

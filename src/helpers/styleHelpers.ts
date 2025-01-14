@@ -77,6 +77,35 @@ export const hexToRgba = (hex: string) => {
   return `rgba(${r},${g},${b},${a})`;
 };
 
+/** rgb 를 hex 로 변경 */
+export const rgbToHex = (r: number, g: number, b: number): string => {
+  // 각 RGB 값을 16진수로 변환하고, 두 자리로 만듦
+  const toHex = (c: number) => {
+    const hex = c.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+
+  // HEX 값으로 조합
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+/** rgba 를 hex로 변환 */
+export const rgbToHexWithAlpha = (r: number, g: number, b: number, alpha: number): string => {
+  // 각 RGB 값을 16진수로 변환하고, 두 자리로 만듦
+  const toHex = (c: number) => {
+    const hex = c.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  };
+
+  // 알파값을 0~255 범위로 변환한 후 16진수로 변환
+  const alphaHex = Math.round(alpha * 255)
+    .toString(16)
+    .padStart(2, "0"); // 두 자리로 만듦
+
+  // HEX 값으로 조합 (알파값 포함)
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}${alphaHex}`;
+};
+
 /** 컬러를 rgba 로 변경 */
 export const convertToRgba = {
   hex: (color: string) => hexToRgba(color),
