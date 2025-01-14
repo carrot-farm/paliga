@@ -4,12 +4,7 @@ import { forwardRef, MutableRefObject, Ref, useState } from "react";
 import { Paliga } from "../../core/Paliga";
 import { timeoutFn } from "../../core/timeUtils";
 import { copyClipboard } from "../../helpers/clipboard";
-import {
-  TAnimate,
-  TIntersectionPlayOptions,
-  TPlayOptions,
-  TScrollProgressOptions,
-} from "../../types";
+import { TAnimate } from "../../types";
 import DevToolOptionSection from "./DevToolOptionSection";
 
 /** ===== Components ===== */
@@ -149,12 +144,5 @@ export type DevToolOptionsPanelProps = {
 
 export type TValues = { [k in keyof TAnimateObj]?: string | TAnimateObj[k] };
 type TAnimateObj = Omit<TAnimate, "elements">;
-
-/** 컨트롤 옵션 */
-type TControlOptions = {
-  play?: TPlayOptions;
-  intersectionPlay?: TIntersectionPlayOptions;
-  scrollProgress?: TScrollProgressOptions;
-};
 
 export default forwardRef(DevToolOptionsPanel);

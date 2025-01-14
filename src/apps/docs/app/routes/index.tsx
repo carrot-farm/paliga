@@ -10,6 +10,7 @@ import ReactDevIntersectionPlayPage from "../../pages/react/dev/ReactDevIntersec
 import ReactDevPlayPage from "../../pages/react/dev/ReactDevPlayPage";
 import ReactDevScrollProgress1Page from "../../pages/react/dev/ReactDevScrollProgress1Page";
 import ReactDevScrollProgress2Page from "../../pages/react/dev/ReactDevScrollProgress2Page";
+import ReactDevTimelineGroupPage from "../../pages/react/dev/ReactDevTimelineGroupPage";
 import ReactDevPage from "../../pages/react/ReactDevPage";
 import ReactTimelineGroupPage from "../../pages/react/ReactTimelineGroupPage";
 import ReactTimelinePage from "../../pages/react/ReactTimelinePage";
@@ -45,6 +46,7 @@ export function BaseRoutes() {
               <Route path="intersectino-play" element={<ReactDevIntersectionPlayPage />} />
               <Route path="scroll-progress-1" element={<ReactDevScrollProgress1Page />} />
               <Route path="scroll-progress-2" element={<ReactDevScrollProgress2Page />} />
+              <Route path="timeline-group" element={<ReactDevTimelineGroupPage />} />
             </Route>
             <Route path="use-paliga" element={<ReactUsePaligaPage />} />
           </Route>

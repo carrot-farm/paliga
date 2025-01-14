@@ -16,6 +16,7 @@ import {
   TPlayOptions,
   TScrollProgressOptions,
 } from "../../types";
+import { DevTool } from "../DevTool";
 import { TimelineGroupItem } from "./TimelineGroupItem";
 
 /** ===== Components ===== */
@@ -23,6 +24,7 @@ import { TimelineGroupItem } from "./TimelineGroupItem";
 /** 그룹 */
 function TimelineGroup({
   progress,
+  isDevTool,
   isAutoPlay,
   isIntersectionPlay,
   isScrollProgress,
@@ -109,9 +111,12 @@ function TimelineGroup({
   }, []);
 
   return (
-    <TimelineGroupContext.Provider value={{ timeline, elements, setElements }}>
-      {children}
-    </TimelineGroupContext.Provider>
+    <>
+      <TimelineGroupContext.Provider value={{ timeline, elements, setElements }}>
+        {children}
+      </TimelineGroupContext.Provider>
+      {isDevTool && <DevTool paligaRef={paligaRef} />}
+    </>
   );
 }
 
@@ -140,6 +145,8 @@ export type TimelineGroupProps = {
   isIntersectionPlay?: boolean;
   /** true 일 경우 scrollProgress 시작 */
   isScrollProgress?: boolean;
+  /** true 일 경우 개발툴 활성화 */
+  isDevTool?: boolean;
   /** auto play 시 옵션 정의 */
   autoPlayOptions?: TPlayOptions;
   /** intersectionPlay 옵션 */

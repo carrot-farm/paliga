@@ -113,6 +113,14 @@ function DevToolOptionSection({ onChange, ...options }: DevToolOptionSectionProp
         onValueChange={(v) => onChange({ ...options, duration: v })}
       />
 
+      <h3>delay</h3>
+      <DevToolRange
+        min={0}
+        max={10000}
+        value={options.delay}
+        onValueChange={(v) => onChange({ ...options, delay: v })}
+      />
+
       <h3>opacity</h3>
       <DevToolRange
         min={0}

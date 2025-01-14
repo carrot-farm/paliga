@@ -26,6 +26,11 @@ function ReactDevPage({}: ReactDeugrops) {
             Scroll Progress( container )
           </Link>
         </li>
+        <li>
+          <Link to="/react/dev/timeline-group" className="hover:underline">
+            Timeline Group
+          </Link>
+        </li>
       </ul>
     </div>
   );
