@@ -76,7 +76,7 @@ export const defaultConfig: UserConfig = {
     /** 타입 정의 파일을 생성 */
     dts({
       insertTypesEntry: true,
-      tsconfigPath: resolve(__dirname, "tsconfig.pubilsh.json"),
+      tsconfigPath: resolve(__dirname, "tsconfig.publish.json"),
       exclude: ["dist", "node_modules"],
       afterBuild: () => {
         const srcPath = resolve(__dirname, "src/types.d.ts");
