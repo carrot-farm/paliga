@@ -37,6 +37,6 @@ jobs:
           NEW_VERSION: ${{ github.event.release.tag_name }}
 
       - name: NPM publish
-        run: npm run build --workspace=@paliga/core && cd apps/paliga && npm publish --provenance --access public
+        run: cd apps/paliga && npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
