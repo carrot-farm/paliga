@@ -27,24 +27,13 @@
     },
     "./dev-tool.css": {
       "default": "./src/react/DevTool/dev-tool.css"
-    },
-    "./paliga": {
-      "default": "./src/index.ts"
-    },
-    "./helpers/*": {
-      "default": "./src/helpers/*"
-    },
-    "./react": {
-      "default": "./src/react/index.tsx"
-    },
-    "./types.d.ts": {
-      "default": "./src/types.d.ts"
     }
   },
   "scripts": {
     "dev": "npm-run-all --parallel dev:docs tw",
     "dev:docs": "vite --host --mode docs",
     "build": "tsc && vite build",
+    "prepublishOnly": "npm run build",
     "tw": "npx tailwindcss -i ./src/apps/docs/input.css -o ./src/apps/docs/output.css --watch",
     "vi": "vitest --config vite-vitest.config.ts",
     "vi:run": "vitest run --config vite-vitest.config.ts",
@@ -98,6 +87,9 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
   "lint-staged": {
     "*.{ts,tsx,d.ts,js,jsx,css}": "prettier --write"
   },
