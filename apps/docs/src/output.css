@@ -1259,6 +1259,10 @@ code[class*="language-tsx"] {
   height: 100vh;
 }
 
+.h-20 {
+  height: 5rem;
+}
+
 .max-h-\[20rem\] {
   max-height: 20rem;
 }
@@ -3188,6 +3192,14 @@ code[class*="language-tsx"] {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.text-\[32px\] {
+  font-size: 32px;
+}
+
+.text-\[28px\] {
+  font-size: 28px;
 }
 
 .font-extralight {

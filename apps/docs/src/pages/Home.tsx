@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@nextui-org/react";
 import { IoArrowForward } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -12,14 +11,12 @@ function HomePage({}: HomePageProps) {
       <Header />
 
       <div className="pt-[200px] text-center">
-        <h2 className="text-[35px] font-semibold">Simplifying Animation Development</h2>
+        <h2 className="px-5 text-[28px] font-semibold">Simplifying Animation Development</h2>
         <div className="mt-10">
-          <Link to="/guide/installation">
-            <Button color="warning">
-              <IoArrowForward />
-              Getting Started
-            </Button>
-          </Link>
+          <Button color="warning" variant="shadow" to="/guide/installation" as={Link}>
+            <IoArrowForward />
+            Getting Started
+          </Button>
         </div>
       </div>
     </>
