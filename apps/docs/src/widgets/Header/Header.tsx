@@ -30,11 +30,16 @@ function Header({}: HeaderProps) {
 
       {/* right */}
       <NavbarContent justify="end">
-        <a href="https://github.com/carrot-farm/paliga" target="__blank">
-          <Button variant="bordered" radius="full" isIconOnly>
-            <IoLogoGithub size={20} />
-          </Button>
-        </a>
+        <Button
+          variant="bordered"
+          radius="full"
+          href="https://github.com/carrot-farm/paliga"
+          target="__blank"
+          isIconOnly
+          as={Link}
+        >
+          <IoLogoGithub size={20} />
+        </Button>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="block lg:hidden"
@@ -44,6 +49,7 @@ function Header({}: HeaderProps) {
       {/* menu */}
       <NavbarMenu className="block">
         <Menu data={MENU_ITEMS} onClick={() => setIsMenuOpen(false)} />
+        <div className="h-20">&nbsp;</div>
       </NavbarMenu>
     </Navbar>
   );
