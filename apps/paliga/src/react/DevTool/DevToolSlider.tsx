@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { minMax } from "../../helpers/mathHelpers";
 
 /** ===== Components ===== */
@@ -31,9 +31,8 @@ function DevToolSlider({
     return progress;
   }, [fillOffset, min, max, step]);
 
-  /** 마우스 다운 */
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.preventDefault();
+  /** slider 시작 */
+  const sliderStart = () => {
     if (!bgRef.current) {
       return;
     }
@@ -42,6 +41,43 @@ function DevToolSlider({
     setMaxX(bgRef.current.clientWidth);
     document.body.setAttribute("data-paliga-dev-tool_slider-grabbing", "true");
     setIsGrabbing(true);
+  };
+
+  /** 슬라이더 움직임 */
+  const sliderMove = (clientX: number) => {
+    const { elX, prevProgress } = offset.current;
+    const calcX = minMax(clientX - elX, minX, maxX);
+    const progress = getStepProgress({ value: calcX, min: minX, max: maxX, step: stepX });
+
+    if (typeof onChange === "function" && progress !== prevProgress) {
+      const direction = prevProgress < progress ? "right" : "left";
+      const result = diff * progress + min;
+      const hasDecimalStep = step % 1 !== 0; // step 이 소수점을 포함하지 않는 경우
+      // 소수점이 생기는 문제를 방지
+      const directionValue = !hasDecimalStep
+        ? direction === "right"
+          ? Math.floor(result)
+          : Math.round(result)
+        : result;
+      const value = minMax(directionValue, min, max);
+
+      onChange({ value, progress, direction });
+    }
+
+    if (value !== undefined) {
+      return;
+    }
+    changeProgressBar(progress);
+  };
+
+  /** 마우스 다운 */
+  const handleMouseDown = () => {
+    sliderStart();
+  };
+
+  /** 터치 스타트 */
+  const handleTouchStart = () => {
+    sliderStart();
   };
 
   /** progress 변경 */
@@ -109,42 +145,46 @@ function DevToolSlider({
 
   /** 이벤트 */
   useEffect(() => {
-    /** 마우스 움직임 */
-    const handleMouseMove = (e: MouseEvent) => {
-      e.preventDefault();
-      const { elX, prevProgress } = offset.current;
-      const calcX = minMax(e.clientX - elX, minX, maxX);
-      const progress = getStepProgress({ value: calcX, min: minX, max: maxX, step: stepX });
-
-      if (typeof onChange === "function" && progress !== prevProgress) {
-        const value = minMax(diff * progress + min, min, max);
-        onChange({ value, progress });
-      }
-
-      if (value !== undefined) {
-        return;
-      }
-      changeProgressBar(progress);
-    };
-
-    /** 마우스 업 */
-    const handleMouseUp = (e: MouseEvent) => {
-      e.preventDefault();
+    const sliderEnd = () => {
       setIsGrabbing(false);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
       document.body.removeAttribute("data-paliga-dev-tool_slider-grabbing");
+    };
+
+    /** 마우스 움직임 */
+    const handleMouseMove = (e: MouseEvent) => {
+      sliderMove(e.clientX);
+    };
+
+    /** 마우스 업 */
+    const handleMouseUp = () => {
+      sliderEnd();
+    };
+
+    /** 터치 움직임 */
+    const handleTouchMove = (e: TouchEvent) => {
+      const [touch] = e.touches;
+      sliderMove(touch.clientX);
+    };
+
+    /** 터치 종료 */
+    const handleTouchEnd = () => {
+      sliderEnd();
     };
 
     if (isGrabbing) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
       return;
     }
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      sliderEnd();
     };
   }, [isGrabbing]);
 
@@ -165,6 +205,7 @@ function DevToolSlider({
           data-is-granning={isGrabbing}
           ref={thumbRef}
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
         >
           <div data-paliga-dev-tool="dev-tool-slider__thumb"></div>
         </div>
@@ -197,7 +238,8 @@ const getStepProgress = ({
   const newValue = value - min;
   const diff = max - min;
   const rate = diff / step;
-  return Math.round(newValue / step) / rate;
+  const result = Math.round(newValue / step) / rate;
+  return result;
 };
 
 /** ===== Types ===== */
@@ -219,7 +261,7 @@ export type DevToolSliderProps = {
   /** 오른쪽 렌더링 */
   rightContent?: ReactNode;
   /** 변경 시 콜백 */
-  onChange?: (data: { progress: number; value: number }) => void;
+  onChange?: (data: { progress: number; value: number; direction: "left" | "right" }) => void;
 };
 
 export default DevToolSlider;

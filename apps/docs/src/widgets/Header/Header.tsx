@@ -49,7 +49,7 @@ function Header({}: HeaderProps) {
       {/* menu */}
       <NavbarMenu className="block">
         <Menu data={MENU_ITEMS} onClick={() => setIsMenuOpen(false)} />
-        <div className="h-20">&nbsp;</div>
+        <div className="h-32">&nbsp;</div>
       </NavbarMenu>
     </Navbar>
   );

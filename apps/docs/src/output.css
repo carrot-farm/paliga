@@ -1130,6 +1130,10 @@ code[class*="language-tsx"] {
   height: 0.875rem;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
 .h-4 {
   height: 1rem;
 }
@@ -1257,10 +1261,6 @@ code[class*="language-tsx"] {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-20 {
-  height: 5rem;
 }
 
 .max-h-\[20rem\] {
@@ -3155,8 +3155,8 @@ code[class*="language-tsx"] {
   font-size: 100%;
 }
 
-.text-\[35px\] {
-  font-size: 35px;
+.text-\[28px\] {
+  font-size: 28px;
 }
 
 .text-large {
@@ -3192,14 +3192,6 @@ code[class*="language-tsx"] {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
-}
-
-.text-\[32px\] {
-  font-size: 32px;
-}
-
-.text-\[28px\] {
-  font-size: 28px;
 }
 
 .font-extralight {
