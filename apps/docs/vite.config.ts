@@ -4,6 +4,7 @@ import prism from "vite-plugin-prismjs";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/github-pages/",
   plugins: [
     react(),
     prism({
