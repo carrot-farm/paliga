@@ -9,7 +9,7 @@ function Menu({ data, onClick }: MenuProps) {
   return (
     <Accordion
       selectionMode="multiple"
-      className=""
+      showDivider={false}
       itemClasses={{
         titleWrapper: "flex-initial",
         indicator: "text-foreground",
@@ -18,7 +18,7 @@ function Menu({ data, onClick }: MenuProps) {
     >
       {data?.map((a, i) => (
         <AccordionItem title={a.label} aria-label={a.label} key={i}>
-          <ul className="flex list-inside list-disc flex-col gap-2 [&>li>strong]:font-medium [&>li>strong]:text-foreground">
+          <ul className="[&>li>strong]:text-foreground flex list-inside list-disc flex-col gap-2 [&>li>strong]:font-medium">
             {a.items.map((item, k) => (
               <li
                 key={`${item.label}__menu-item__${k}`}

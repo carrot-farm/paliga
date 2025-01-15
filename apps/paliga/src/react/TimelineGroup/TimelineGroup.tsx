@@ -115,6 +115,7 @@ function TimelineGroup({
       <TimelineGroupContext.Provider value={{ timeline, elements, setElements }}>
         {children}
       </TimelineGroupContext.Provider>
+
       {isDevTool && <DevTool paligaRef={paligaRef} />}
     </>
   );

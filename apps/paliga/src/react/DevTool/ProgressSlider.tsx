@@ -73,11 +73,11 @@ function ProgressSlider({ paligaRef }: { paligaRef: DevToolProps["paligaRef"] })
         <div data-paliga-dev-tool="progress-slider__progress-wrapper">
           {delimiters.length > 0 && (
             <div data-paliga-dev-tool="progress-slider__delimiters-container">
-              {delimiters.map((a) => (
+              {delimiters.map((a, i) => (
                 <Delimiter
                   progress={a.progress}
                   duration={a.duration}
-                  key={a.progress}
+                  key={`progress-slider-delimiter-${i}`}
                   onClick={handleDelimiterClick}
                 />
               ))}

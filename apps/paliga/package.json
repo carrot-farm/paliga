@@ -12,7 +12,6 @@
     "url": "git+https://github.com/carrot-farm/paliga.git"
   },
   "author": "chohoki@gmail.com",
-  "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/index.d.ts",
@@ -28,6 +27,12 @@
     },
     "./dev-tool.css": {
       "default": "./dist/dev-tool.css"
+    },
+    "./src": {
+      "default": "./src/index.ts"
+    },
+    "./src/dev-tool.css": {
+      "default": "./src/react/DevTool/dev-tool.css"
     }
   },
   "scripts": {

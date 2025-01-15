@@ -2,6 +2,10 @@ import { TMenu } from "../../widgets/Menu";
 
 export const MENU_ITEMS: TMenu = [
   {
+    label: "Getting Started",
+    items: [{ label: "Installation", path: "/guide/installation" }],
+  },
+  {
     label: "Animation",
     items: [{ label: "Transition", path: "/animation/transition" }],
   },

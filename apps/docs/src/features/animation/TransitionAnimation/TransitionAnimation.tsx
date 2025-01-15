@@ -57,9 +57,9 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         title="width, height"
         titleLink="animation-width-height"
         description="넓이, 놃이"
+        code={ANIMATION_CODES["transition-width-height"]}
         onReady={({ paliga }) => {
           paliga.timeline([box13.current!, box14.current!], {
-            direction: "reverse",
             each: (_, i) => ({
               width: i === 0 ? 80 : undefined,
               height: i === 1 ? 80 : undefined,
@@ -82,9 +82,9 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         title="border"
         titleLink="animation-border"
         description="테두리 굵기, 색상"
+        code={ANIMATION_CODES["transition-border"]}
         onReady={({ paliga }) => {
           paliga.timeline([box15.current!, box16.current!], {
-            direction: "reverse",
             borderWidth: 3,
             each: (_, i) => ({
               borderColor: i === 1 ? "#262df1" : undefined,
@@ -107,6 +107,7 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         title="scale"
         titleLink="animation-scale"
         description="스케일 x, y, z(scle: x, y 둘다 적용)"
+        code={ANIMATION_CODES["transition-scale"]}
         onReady={({ paliga }) => {
           paliga.timeline([box4.current!, box10.current!, box11.current!, box12.current!], {
             each: (_, i) => ({
@@ -144,6 +145,7 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         title="rotate"
         titleLink="animation-rotate-0"
         description="축 회전. `rotate`는 `rotateZ` 의 별칭"
+        code={ANIMATION_CODES["transition-rotate"]}
         onReady={({ paliga }) => {
           paliga
             .timeline([box5.current!], {
@@ -171,6 +173,7 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         title="opacity: number"
         titleLink="animation-transition-0"
         description="투명도"
+        code={ANIMATION_CODES["transition-opacity"]}
         onReady={({ paliga }) => {
           paliga.timeline([box3.current!], {
             opacity: 0,
@@ -185,6 +188,7 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         title="backgroundColor: string"
         titleLink="animation-backgroundColor-0"
         description="색상 타입이 hex, rgb, rgba 일 경우 배경색 변경(다른 색상 타입 미지원)"
+        code={ANIMATION_CODES["transition-backgroundColor"]}
         onReady={({ paliga }) => {
           paliga.timeline([box8.current!], {
             backgroundColor: "#8214b880",
@@ -192,7 +196,7 @@ function TransitionAnimation({}: TransitionAnimationProps) {
         }}
         onPlay={({ paliga }) => paliga?.play()}
       >
-        <TestSection.Box className="h-10 w-10 bg-warning" ref={box8}></TestSection.Box>
+        <TestSection.Box className="bg-warning h-10 w-10" ref={box8}></TestSection.Box>
       </TestSection>
     </div>
   );

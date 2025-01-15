@@ -1,52 +1,34 @@
 "use client";
-import { useEffect } from "react";
+
+import { Button } from "@nextui-org/react";
+import { IoArrowForward } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import { Header } from "../widgets/Header";
 
 /** ===== Components ===== */
-function Home({}: HomeProps) {
-  useEffect(() => {
-    const st = performance.now();
-    const ani = () => {
-      const step = (t: number) => {
-        const t2 = performance.now() - st;
-        console.log("> ", t, t2);
-        if (t >= 2000) {
-          return;
-        }
-
-        requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    };
-
-    ani();
-  }, []);
-
+function HomePage({}: HomePageProps) {
   return (
-    <div className="">
-      <h3 className="font-semibold">Animate</h3>
+    <>
+      <Header />
 
-      {/* <TestSection 
-        description="2000ms 동안 x 축으로 200px 이동"
-        onReady={({ paliga }) => {
-          if(!box1.current) {
-            return
-          }
-          paliga.animate([box1.current],{ 
-            x: 200,
-            duration: 2000
-          });
-        }}
-        onPlay={({ paliga }) => paliga?.play()}
-      >
-        <TestSection.Box className="bg-red-500" ref={box1} />
-      </TestSection> */}
-    </div>
+      <div className="pt-[200px] text-center">
+        <h2 className="text-[35px] font-semibold">Simplifying Animation Development</h2>
+        <div className="mt-10">
+          <Link to="/guide/installation">
+            <Button color="warning">
+              <IoArrowForward />
+              Getting Started
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }
 
 /** ===== Others ===== */
 
 /** ===== Types ===== */
-export type HomeProps = {};
+export type HomePageProps = {};
 
-export default Home;
+export default HomePage;

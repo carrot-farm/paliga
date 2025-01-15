@@ -8,7 +8,7 @@ import "prismjs";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 import "prismjs/themes/prism-tomorrow.css";
 
-import "@paliga/core/dev-tool.css";
+import "@paliga/core/src/dev-tool.css";
 
 declare module "@react-types/shared" {
   interface RouterConfig {

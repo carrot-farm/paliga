@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@nextui-org/react";
-import { TTransition } from "@paliga/core/types.d.ts";
+import { TTransition } from "@paliga/core/src";
 import { useRef } from "react";
 import { TestSection } from "../../../test/components/TestSection";
 

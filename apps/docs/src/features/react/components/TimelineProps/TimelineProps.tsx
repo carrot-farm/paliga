@@ -1,6 +1,5 @@
 "use client";
-import { Timeline, usePaliga } from "@paliga/core/react";
-import { TimelineHTMLRef } from "@paliga/core/types.d.ts";
+import { Timeline, TimelineHTMLRef, usePaliga } from "@paliga/core/src";
 import { useEffect, useRef, useState } from "react";
 import { TestSection } from "../../../test/components/TestSection";
 

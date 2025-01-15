@@ -1,5 +1,6 @@
 "use client";
 import {
+  Button,
   Link,
   Navbar,
   NavbarBrand,
@@ -8,6 +9,7 @@ import {
   NavbarMenuToggle,
 } from "@nextui-org/react";
 import { useState } from "react";
+import { IoLogoGithub } from "react-icons/io5";
 import { MENU_ITEMS } from "../../shared/constants/menu";
 import { Menu } from "../Menu";
 
@@ -19,15 +21,24 @@ function Header({}: HeaderProps) {
     <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
       {/* left */}
       <NavbarContent>
+        <NavbarBrand>
+          <Link href="/" color="foreground">
+            <h1 className="text-2xl font-semibold">PALIGA</h1>
+          </Link>
+        </NavbarBrand>
+      </NavbarContent>
+
+      {/* right */}
+      <NavbarContent justify="end">
+        <a href="https://github.com/carrot-farm/paliga" target="__blank">
+          <Button variant="bordered" radius="full" isIconOnly>
+            <IoLogoGithub size={20} />
+          </Button>
+        </a>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="block lg:hidden"
         />
-        <NavbarBrand>
-          <Link href="/" color="foreground">
-            Paliga
-          </Link>
-        </NavbarBrand>
       </NavbarContent>
 
       {/* menu */}

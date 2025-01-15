@@ -3,7 +3,7 @@ import Prism from "prismjs";
 import { useEffect } from "react";
 
 /** ===== Components ===== */
-function TestSectionCode({ language = "tsx", children }: TestSectionCodeProps) {
+function CodeBlock({ language = "tsx", children }: CodeBlockProps) {
   useEffect(() => {
     Prism.highlightAll();
   }, []);
@@ -14,16 +14,15 @@ function TestSectionCode({ language = "tsx", children }: TestSectionCodeProps) {
     </pre>
   );
 }
-TestSectionCode.prototype.displayName = "TestSectionCode";
 
 /** ===== Others ===== */
 
 /** ===== Types ===== */
-export type TestSectionCodeProps = {
+export type CodeBlockProps = {
   /** 코드 내용 */
   children?: string;
   /** language */
   language?: "typescript" | "tsx" | "html" | "css";
 };
 
-export default TestSectionCode;
+export default CodeBlock;

@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TransitionAnimationPage from "../../pages/animation/TransitionAnimationPage";
+import InstallationPage from "../../pages/guide/InstallationPage";
 import Home from "../../pages/Home";
 import IntersectionPlayPage from "../../pages/intersection-play/IntersectionPlayPage";
 import ReverseMethodPage from "../../pages/methods/ReverseMethodPage";
@@ -25,6 +26,10 @@ export function BaseRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route element={<MainLayout />}>
+          <Route path="/guide">
+            <Route path="installation" element={<InstallationPage />} />
+          </Route>
+
           <Route path="/timeline" element={<TimelinePage />} />
           <Route path="/play" element={<PlayPage />} />
           <Route path="/pause" element={<PausePage />} />

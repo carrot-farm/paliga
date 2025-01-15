@@ -18,9 +18,9 @@ function ReactDevTimelineGroupPage({}: ReactDevTimelineGroupPageProps) {
           { x: -100 },
         ]}
       >
-        <TimelineGroup.Item className="h-10 w-10 rounded-md bg-warning" />
-        <TimelineGroup.Item className="h-10 w-10 rounded-md bg-warning" />
-        <TimelineGroup.Item className="h-10 w-10 rounded-md bg-warning" />
+        <TimelineGroup.Item className="bg-warning h-10 w-10 rounded-md" />
+        <TimelineGroup.Item className="bg-warning h-10 w-10 rounded-md" />
+        <TimelineGroup.Item className="bg-warning h-10 w-10 rounded-md" />
       </TimelineGroup>
     </div>
   );

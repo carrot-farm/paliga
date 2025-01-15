@@ -1,6 +1,6 @@
 "use client";
 import { Button, cn, Slider } from "@nextui-org/react";
-import { Paliga } from "@paliga/core/paliga";
+import { Paliga } from "@paliga/core/src";
 import { useEffect, useState } from "react";
 import { IoPause, IoPlay } from "react-icons/io5";
 

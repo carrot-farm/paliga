@@ -1,7 +1,6 @@
 "use client";
 import { Button, cn, Link, Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
-import { getScrollTriggerY } from "@paliga/core/helpers/scrollHelpers.ts";
-import { Paliga } from "@paliga/core/paliga";
+import { getScrollTriggerY, Paliga } from "@paliga/core/src";
 import {
   forwardRef,
   MutableRefObject,
@@ -13,7 +12,7 @@ import {
   useState,
 } from "react";
 import { IoCodeSlashSharp } from "react-icons/io5";
-import TestSectionCode from "./TestSectionCode";
+import { CodeBlock } from "../../../../shared/components/CodeBlock";
 import TestSectionController from "./TestSectionController";
 
 /** ===== Components ===== */
@@ -153,7 +152,7 @@ function TestSection({
         <ModalContent>
           <ModalHeader></ModalHeader>
           <ModalBody>
-            <TestSectionCode>{code}</TestSectionCode>
+            <CodeBlock>{code}</CodeBlock>
           </ModalBody>
         </ModalContent>
       </Modal>
